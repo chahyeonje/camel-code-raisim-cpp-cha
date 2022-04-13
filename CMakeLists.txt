@@ -48,4 +48,5 @@ function(create_executable app_name file_name)
 endfunction()
 
 create_executable(camel-simplePendulum src/SimplePendulum/SimplePendulumSimulation.cpp)
+create_executable(camel-rmd8xtest src/RMDX8PRO/RMDX8ProOperation.cpp)
 
