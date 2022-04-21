@@ -14,8 +14,8 @@ int main() {
     if (canX8pro.getSock() < 0) { return -1; }
     canX8pro.turnOnMotor(motor1ID);
 
-    int torque_int = -220;
-    canX8pro.setTorque(motor1ID, torque_int);
+    double torque = -7.8;
+    canX8pro.setTorque(motor1ID, torque);
 
     sleep(5);
 

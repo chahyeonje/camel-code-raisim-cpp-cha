@@ -55,7 +55,7 @@ public:
 
     void readMotorStatus2(int motorID);
 
-    void setTorque(int motorID ,int Torque_int);
+    void setTorque(int motorID ,double torque);
 
     void setVelocity(int motorID, int Velocity);
 
@@ -266,16 +266,17 @@ void CanMotorX8Pro::turnOnMotor(int motorID) {
 
 // 37. Torque closed-loop command (0xA1)
 // torque_int : 0 ~ 4096 which matches to (-32A ~ 32A)
-void CanMotorX8Pro::setTorque(int motorID, int torque_int) {
-    int temp = torque_int;
+void CanMotorX8Pro::setTorque(int motorID, double torque) {
+    int torque_int = round((torque - 0.05466845454545443) / 0.03936824733201581);
+    std::cout<<"torque_int"<<torque_int<<std::endl;
 
     if (torque_int < 0) {
-        temp += +2 * pow(2, 15);
+        torque_int += +2 * pow(2, 15);
     }
 
-    u_int8_t torqueLowerData = temp % 256;
-    temp = temp / 256;
-    u_int8_t torqueUpperData = temp % 256;
+    u_int8_t torqueLowerData = torque_int % 256;
+    torque_int = torque_int / 256;
+    u_int8_t torqueUpperData = torque_int % 256;
     u_int8_t data[8] = {0Xa1, 0X00, 0X00, 0X00, torqueLowerData, torqueUpperData, 0X00, 0X00};
     canSend(data, motorID);
     canRead();
