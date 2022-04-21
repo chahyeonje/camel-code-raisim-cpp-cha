@@ -33,9 +33,9 @@ public:
         initCanInterface(canName);
     }
 
-    float rad2deg = 180.0 / 3.141592;
-    float deg2rad = 3.141592 / 180.0;
-    float enc2rad = 2 * 3.141592 / 65535;
+    double rad2deg = 180.0 / 3.141592;
+    double deg2rad = 3.141592 / 180.0;
+    double enc2rad = 2 * 3.141592 / 65535;
 
     void initCanInterface(const char *CanName);
 
@@ -65,17 +65,17 @@ public:
 
     can_frame getFrame() { return mFrame; }
 
-    float getAngularPosition() { return mAngularPosition_rad; }
+    double getAngularPosition() { return mAngularPosition_rad; }
 
-    float getAngularVelocity() { return mAngularVelocity_rad; }
+    double getAngularVelocity() { return mAngularVelocity_rad; }
 
     int getEncoder() { return mEncoder; }
 
 private:
     struct can_frame mFrame;
     const char *mCanName;
-    float mAngularPosition_rad;
-    float mAngularVelocity_rad;
+    double mAngularPosition_rad;
+    double mAngularVelocity_rad;
     int mEncoder;
     int mSock;
     int mSendedCommand;
@@ -215,7 +215,7 @@ void CanMotorX8Pro::readMultiturnAngularPosition(int motorID) {
     u_int8_t data[8] = {0X92, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00};
     canSend(data, motorID);
     canRead();
-    float degree = (mFrame.data[1] + mFrame.data[2] * 256.0 + mFrame.data[3] * 256.0 * 256.0 +
+    double degree = (mFrame.data[1] + mFrame.data[2] * 256.0 + mFrame.data[3] * 256.0 * 256.0 +
                     mFrame.data[4] * 256.0 * 256.0 * 256.0 +
                     mFrame.data[5] * 256.0 * 256.0 * 256.0 * 256.0 +
                     mFrame.data[6] * 256.0 * 256.0 * 256.0 * 256.0 * 256.0) * 0.01 / mGearRatio;

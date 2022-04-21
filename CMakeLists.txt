@@ -49,4 +49,5 @@ endfunction()
 
 create_executable(camel-simplePendulum src/SimplePendulum/SimplePendulumSimulation.cpp)
 create_executable(camel-rmd8xtest src/RMDX8PRO/RMDX8ProOperation.cpp)
+create_executable(camel-rmdx8torque_test src/Test/Test_RMDX8Pro.cpp)
 
