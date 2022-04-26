@@ -3,10 +3,11 @@
 //
 
 #include "SimplePendulumSimulation.h"
+#include "src/Test_UI/mainwindow.h"
+//#include <QApplication>
 
-
-
-int main(){
+int main(int argc, char *argv[]){
+//    QApplication
     std::string urdfPath = "\\home\\jaehoon\\raisimLib\\camel-code-raisim-cpp\\rsc\\camel_simple_pendulum.urdf";
     std::string name = "cutePendulum";
     raisim::World world;
