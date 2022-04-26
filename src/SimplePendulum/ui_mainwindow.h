@@ -1,13 +1,9 @@
-/********************************************************************************
-** Form generated from reading UI file 'mainwindow.ui'
-**
-** Created by: Qt User Interface Compiler version 5.9.5
-**
-** WARNING! All changes made in this file will be lost when recompiling UI file!
-********************************************************************************/
+//
+// Created by jaehoon on 22. 4. 26.
+//
 
-#ifndef UI_MAINWINDOW_H
-#define UI_MAINWINDOW_H
+#ifndef RAISIM_UI_MAINWINDOW_H
+#define RAISIM_UI_MAINWINDOW_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -115,4 +111,5 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // UI_MAINWINDOW_H
+
+#endif //RAISIM_UI_MAINWINDOW_H

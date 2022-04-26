@@ -1,3 +1,7 @@
+//
+// Created by jaehoon on 22. 4. 26.
+//
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <iostream>
@@ -18,6 +22,7 @@ void MainWindow::on_pushButton_clicked()
 {
 //  CAN init
     std::cout<<"button 1 is clicked"<<std::endl;
+//    this->thread.Run();
 }
 
 void MainWindow::on_pushButton_2_clicked()
@@ -91,3 +96,4 @@ void MainWindow::plotWidget2()
     ui->widget_2->yAxis->setRange(0, 1);
     ui->widget_2->replot();
 }
+

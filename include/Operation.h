@@ -5,9 +5,9 @@
 #ifndef RAISIM_OPERATION_H
 #define RAISIM_OPERATION_H
 
-#include "raisim/World.hpp"
-#include "raisim/math.hpp"
-#include "raisim/RaisimServer.hpp"
+#include "../../raisim/linux/include/raisim/math.hpp"
+#include "../../raisim/linux/include/raisim/RaisimServer.hpp"
+#include "../../raisim/linux/include/raisim/World.hpp"
 
 class Operation {
 

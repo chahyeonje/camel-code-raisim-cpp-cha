@@ -3,11 +3,10 @@
 //
 
 #include "SimplePendulumSimulation.h"
-#include "src/Test_UI/mainwindow.h"
-//#include <QApplication>
+#include "mainwindow.h"
+#include <QApplication>
 
 int main(int argc, char *argv[]){
-//    QApplication
     std::string urdfPath = "\\home\\jaehoon\\raisimLib\\camel-code-raisim-cpp\\rsc\\camel_simple_pendulum.urdf";
     std::string name = "cutePendulum";
     raisim::World world;
@@ -19,6 +18,11 @@ int main(int argc, char *argv[]){
     raisim::RaisimServer server(&world);
     server.launchServer(8080);
 
-    SimulationThread thread = SimulationThread(&world, &PDcontroller);
-    thread.Run();
+    SimulationThread thread(&world, &PDcontroller);
+
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
+
+    return a.exec();
 }

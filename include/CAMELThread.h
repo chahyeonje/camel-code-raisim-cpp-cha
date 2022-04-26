@@ -26,7 +26,7 @@ void CAMELThread::Run() {
     while(true)
     {
         std::this_thread::sleep_for(std::chrono::microseconds(1000));
-        mSimulation->getWorld()->integrate();
+//        mSimulation->getWorld()->integrate();
     }
 }
 
