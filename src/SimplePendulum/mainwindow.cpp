@@ -22,42 +22,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-//  CAN init
-    std::cout<<"button 1 is clicked"<<std::endl;
+    std::cout<<"'Run' button is clicked"<<std::endl;
+//    plotWidget1();
+//    plotWidget2();
     if(button1){button1 = false;}
     else{button1 = true;}
-    std::cout<<"button1 :"<< button1<<std::endl;
-//    this->thread.Run();
-}
-
-void MainWindow::on_pushButton_2_clicked()
-{
-//  Motor On
-    std::cout<<"button 2 is clicked"<<std::endl;
-}
-
-void MainWindow::on_pushButton_3_clicked()
-{
-//  Motor Off
-    std::cout<<"button 3 is clicked"<<std::endl;
-}
-
-void MainWindow::on_pushButton_4_clicked()
-{
-//  Start Control
-    std::cout<<"button 4 is clicked"<<std::endl;
-}
-
-void MainWindow::on_pushButton_5_clicked()
-{
-//  Stop Control
-    std::cout<<"button 5 is clicked"<<std::endl;
-}
-
-void MainWindow::on_pushButton_6_clicked()
-{
-//  Generate New Trajectory
-    std::cout<<"button 6 is clicked"<<std::endl;
 }
 
 void MainWindow::plotWidget1()

@@ -27,8 +27,8 @@ void MainWindow::on_pushButton_clicked()
 {
 //  CAN init
     std::cout<<"'CAN init' button is clicked"<<std::endl;
-    plotWidget1();
-    plotWidget2();
+//    plotWidget1();
+//    plotWidget2();
     if(button1){button1 = false;}
     else{button1 = true;}
 }
@@ -95,6 +95,7 @@ void MainWindow::plotWidget1()
 
 void MainWindow::plotWidget2()
 {
+
     // generate some data:
      // initialize with entries 0..100
     for (int i=0; i<101; ++i)
