@@ -17,6 +17,7 @@ class SimplePendulumSimulation : public Simulation {
 
 public:
     SimplePendulumSimulation(raisim::World *world, double dT) : Simulation(world, dT) { ; }
+    void task1(raisim::World *world, Controller *controller);
 
 private:
 

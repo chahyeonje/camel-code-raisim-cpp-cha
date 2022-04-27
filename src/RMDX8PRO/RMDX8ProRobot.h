@@ -12,9 +12,10 @@ class RMDX8ProRobot: public Robot{
 public:
     RMDX8ProRobot(raisim::World *world, std::string urdfPath, std::string name, CanMotorX8Pro *canMotorX8) : Robot(world, urdfPath, name){
         mCanMotorX8 = canMotorX8;
-        mCanMotorX8->turnOnMotor(0x141);
         initialize();
     }
+    void motorOn(int motorID);
+    void motorOff(int motorID);
     void initialize() override;
     void setTorque(int motorID, int torque_int);
     double getQ(int motorID);
@@ -45,5 +46,15 @@ double RMDX8ProRobot::getQD(int motorID){
 
 void RMDX8ProRobot::setTorque(int motorID, int torque_int) {
     mCanMotorX8->setTorque(motorID, torque_int);
+}
+
+void RMDX8ProRobot::motorOn(int motorID)
+{
+    mCanMotorX8->turnOnMotor(motorID);
+}
+
+void RMDX8ProRobot::motorOff(int motorID)
+{
+    mCanMotorX8->turnOffMotor(motorID);
 }
 #endif //RAISIM_RMDX8PROROBOT_H

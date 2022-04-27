@@ -19,6 +19,14 @@ Q_OBJECT
 
 public:
     bool button1 = false;
+    bool button2 = false;
+    bool button3 = false;
+    bool button4 = false;
+    bool button5 = false;
+    bool button6 = false;
+    QVector<double> x;
+    QVector<double> y1;
+    QVector<double> y2;
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 //    void setSimulation(SimulationThread simThread){this->thread = simThread;}
@@ -41,7 +49,6 @@ private slots:
     void plotWidget2();
 private:
     Ui::MainWindow *ui;
-//    SimulationThread thread;
 };
 
 

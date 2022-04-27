@@ -268,7 +268,7 @@ void CanMotorX8Pro::turnOnMotor(int motorID) {
 // torque_int : 0 ~ 4096 which matches to (-32A ~ 32A)
 void CanMotorX8Pro::setTorque(int motorID, double torque) {
     int torque_int = round((torque - 0.05466845454545443) / 0.03936824733201581);
-    std::cout<<"torque_int"<<torque_int<<std::endl;
+//    std::cout<<"torque_int"<<torque_int<<std::endl;
 
     if (torque_int < 0) {
         torque_int += +2 * pow(2, 15);

@@ -53,7 +53,8 @@ function(create_executable app_name file_name)
 endfunction()
 
 create_executable(camel-rmdx8test_torque src/Test/Test_RMDX8Pro.cpp)
-create_executable(camel-rmd8xoperation src/RMDX8PRO/RMDX8ProOperation.cpp)
+add_executable(camel-rmd8xoperation src/RMDX8PRO/RMDX8ProOperation.cpp src/RMDX8PRO/mainwindow.cpp src/RMDX8PRO/qcustomplot.cpp)
+target_link_libraries(camel-rmd8xoperation Qt5::Widgets raisim::raisim pthread)
 
 add_executable(camel-simplePendulum src/SimplePendulum/SimplePendulumSimulation.cpp src/SimplePendulum/mainwindow.cpp src/SimplePendulum/qcustomplot.cpp)
 target_link_libraries(camel-simplePendulum Qt5::Widgets raisim::raisim pthread)

@@ -9,8 +9,8 @@
 
 class RMDX8ProPDContorller{
 public:
-    int torque_int;
-    int torqueLimit = 40; //integer value
+    double torque;
+    double torqueLimit = 10; //integer value
     double position;
     double velocity;
     double positionError;
@@ -24,7 +24,7 @@ public:
     RMDX8ProPDContorller(RMDX8ProRobot *robot){
 
         mRobot = robot;
-        setPDGain(30, 2.5);
+        setPDGain(100.0, 5.0);
     }
     void doControl();
 
@@ -73,16 +73,18 @@ void RMDX8ProPDContorller::updateState() {
 void RMDX8ProPDContorller::computeControlInput() {
     positionError = desiredPosition - position;
     velocityError = desiredVelocity - velocity;
-    torque_int = PGain * positionError + DGain * velocityError;
+    torque = PGain * positionError + DGain * velocityError;
+
 }
 
 void RMDX8ProPDContorller::setControlInput() {
-    if (torque_int > torqueLimit) {
-        torque_int = torqueLimit;
-    } else if (torque_int < -torqueLimit) {
-        torque_int = -torqueLimit;
+    if (torque > torqueLimit) {
+        torque = torqueLimit;
+    } else if (torque < -torqueLimit) {
+        torque = -torqueLimit;
     }
-    mRobot->setTorque(0x141, torque_int);
+    mRobot->setTorque(0x141, torque);
+    std::cout<<"torque : "<<torque<<std::endl;
 }
 
 bool RMDX8ProPDContorller::isTerminateCondition(){
