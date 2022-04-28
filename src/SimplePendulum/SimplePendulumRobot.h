@@ -13,6 +13,7 @@ public:
         initialize();}
     void initialize() override;
     double getQ();
+    double getQD();
 };
 
 void SimplePendulumRobot::initialize() {
@@ -24,6 +25,10 @@ void SimplePendulumRobot::initialize() {
 
 double SimplePendulumRobot::getQ(){
     return this->robot->getGeneralizedCoordinate()[0];
+}
+
+double SimplePendulumRobot::getQD(){
+    return this->robot->getGeneralizedVelocity()[0];
 }
 
 #endif //RAISIM_SIMPLEPENDULUMROBOT_H
