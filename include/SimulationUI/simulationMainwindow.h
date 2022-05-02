@@ -2,12 +2,11 @@
 // Created by jaehoon on 22. 4. 26.
 //
 
-#ifndef RAISIM_MAINWINDOW_H
-#define RAISIM_MAINWINDOW_H
+#ifndef RAISIM_SIMULATIONMAINWINDOW_H
+#define RAISIM_SIMULATIONMAINWINDOW_H
 
 #include <QMainWindow>
 #include <QTimer>
-#include "../../include/SimulationThread.h"
 
 namespace Ui {
     class MainWindow;
@@ -21,9 +20,14 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     bool button1 = false;
-    double data_x[200];
-    double data_y1[200];
-    double data_y2[200];
+    int data_idx = 0;
+    double data_x[201];
+    double data_y1[201];
+    double data_y1_min = 0;
+    double data_y1_max = 0;
+    double data_y2[201];
+    double data_y2_min = 0;
+    double data_y2_max = 0;
 
 public slots:
     void plotWidget1();
@@ -35,4 +39,4 @@ private:
     Ui::MainWindow *ui;
 };
 
-#endif //RAISIM_MAINWINDOW_H
+#endif //RAISIM_SIMULATIONMAINWINDOW_H

@@ -5,7 +5,7 @@
 #ifndef RAISIM_SIMPLEPENDULUMROBOT_H
 #define RAISIM_SIMPLEPENDULUMROBOT_H
 
-#include "../../include/Robot.h"
+#include "include/CAMEL/Robot.h"
 
 class SimplePendulumRobot: public Robot{
 public:

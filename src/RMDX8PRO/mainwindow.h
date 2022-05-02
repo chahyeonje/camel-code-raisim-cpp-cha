@@ -2,11 +2,10 @@
 // Created by jaehoon on 22. 4. 26.
 //
 
-#ifndef RAISIM_MAINWINDOW_H
+#ifndef RAISIM_SIMULATIONMAINWINDOW_H
 #define RAISIM_MAINWINDOW_H
 
 #include <QMainWindow>
-#include "../../include/SimulationThread.h"
 
 
 namespace Ui {
@@ -53,4 +52,4 @@ private:
 
 
 
-#endif //RAISIM_MAINWINDOW_H
+#endif //RAISIM_SIMULATIONMAINWINDOW_H

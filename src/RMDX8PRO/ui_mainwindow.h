@@ -2,7 +2,7 @@
 // Created by jaehoon on 22. 4. 26.
 //
 
-#ifndef RAISIM_UI_MAINWINDOW_H
+#ifndef RAISIM_UI_SIMULATIONMAINWINDOW_H
 #define RAISIM_UI_MAINWINDOW_H
 
 #include <QtCore/QVariant>
@@ -112,4 +112,4 @@ namespace Ui {
 QT_END_NAMESPACE
 
 
-#endif //RAISIM_UI_MAINWINDOW_H
+#endif //RAISIM_UI_SIMULATIONMAINWINDOW_H

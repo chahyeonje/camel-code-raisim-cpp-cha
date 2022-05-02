@@ -5,8 +5,7 @@
 #ifndef RAISIM_SIMPLEPENDULUMSIMULATION_H
 #define RAISIM_SIMPLEPENDULUMSIMULATION_H
 
-#include "../../include/Simulation.h"
-#include "../../include/SimulationThread.h"
+#include "include/CAMEL/Simulation.h"
 #include "SimplePendulumRobot.h"
 #include "SimplePendulumPDController.h"
 
@@ -19,7 +18,6 @@ class SimplePendulumSimulation : public Simulation {
 public:
 
     SimplePendulumSimulation(raisim::World *world, double dT) : Simulation(world, dT) { ; }
-    void task1(raisim::World *world, Controller *controller);
 
 private:
 

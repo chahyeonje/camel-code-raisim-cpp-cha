@@ -1,7 +1,7 @@
 //
 // Created by jaehoon on 22. 4. 20.
 //
-# include "../../include/CanMotorX8Pro.h"
+# include "include/CAN/CanMotorX8Pro.h"
 
 std::string canName_temp = "can8";
 std::string bitRate = "1000000";

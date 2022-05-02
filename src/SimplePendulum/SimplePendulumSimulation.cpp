@@ -3,47 +3,59 @@
 //
 
 #include "SimplePendulumSimulation.h"
-#include "mainwindow.h"
+#include "include/SimulationUI/simulationMainwindow.h"
 #include <QApplication>
 #include <thread>
 #include <cmath>
 extern MainWindow *MainUI;
+bool timeChecker = false;
 
-void thread1task(raisim::World *world, SimplePendulumRobot *robot, Controller *controller, double simulationDuration, bool *button1Pressed) {
+void thread1task(raisim::World *world, SimplePendulumRobot *robot, Controller *controller, double simulationDuration) {
     double dT = world -> getTimeStep();
     double oneCycleSimTime = 0;
     int divider = ceil(simulationDuration / dT / 200);
     int i = 0;
-    int j = 0;
-    std::cout<<"divider : "<<divider<<std::endl;
+//    auto begin = std::chrono::high_resolution_clock::now();
+//    auto end = std::chrono::high_resolution_clock::now();
     while (true) {
-        std::this_thread::sleep_for(std::chrono::microseconds(1000));
-        if ((*button1Pressed) && (oneCycleSimTime < simulationDuration)) {
-            // simDuration/dT = 1000 / 200 = 5
-            i++;
-            oneCycleSimTime = i * dT;
-            controller->doControl();
-            world->integrate();
-//            std::cout<<"i : "<<i<<std::endl;
-            if(i%divider == 0)
-            {
-                std::cout<<"j : "<<j<<std::endl;
-                MainUI->data_x[j] = world -> getWorldTime();
-                MainUI->data_y1[j] = robot -> getQ();
-                MainUI->data_y2[j] = robot -> getQD();
-                j++;
+        if(timeChecker) {
+            if ((MainUI->button1) && (oneCycleSimTime < simulationDuration)) {
+                // control robot and data plot thread
+//                if(i == 0){begin = std::chrono::high_resolution_clock::now();}
+                oneCycleSimTime = i * dT;
+                controller->doControl();
+                world->integrate();
+                if (i % divider == 0) {
+                    //                std::cout<<"data_idx : "<<MainUI->data_idx<<std::endl;
+                    MainUI->data_x[MainUI->data_idx] = world->getWorldTime();
+                    MainUI->data_y1[MainUI->data_idx] = robot->getQ();
+                    MainUI->data_y2[MainUI->data_idx] = robot->getQD();
+                    MainUI->data_idx += 1;
+                }
+                i++;
+                timeChecker = false;
+            } else if (oneCycleSimTime >= simulationDuration) {
+//                end = std::chrono::high_resolution_clock::now();
+//                auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+//                std::cout <<" Time measured: "<< elapsed.count() * 1e-9 <<"seconds" <<std::endl;
+                MainUI->button1 = false;
+                i = 0;
+                oneCycleSimTime = 0;
+                MainUI->plotWidget1();
+                MainUI->plotWidget2();
+                MainUI->data_idx = 0;
             }
-
-        }
-        else if (i > 100){
-            *button1Pressed = false;
-            i = 0;
-            j = 0;
-            oneCycleSimTime = 0;
-//            MainUI->plotWidget1();
-//            MainUI->plotWidget2();
         }
     }
+}
+
+void thread2task()
+{
+    while(true)
+        {
+            std::this_thread::sleep_for(std::chrono::microseconds(100));
+            timeChecker = true;
+        }
 }
 
 int main(int argc, char *argv[]) {
@@ -51,7 +63,7 @@ int main(int argc, char *argv[]) {
     std::string name = "cutePendulum";
     raisim::World world;
 
-    double simulationDuration = 1.0;
+    double simulationDuration = 10.0;
     SimplePendulumSimulation sim = SimplePendulumSimulation(&world, 0.001);
     SimplePendulumRobot simplePendulum = SimplePendulumRobot(&world, urdfPath, name);
     SimplePendulumPDController PDcontroller = SimplePendulumPDController(&simplePendulum);
@@ -61,7 +73,8 @@ int main(int argc, char *argv[]) {
 
     QApplication a(argc, argv);
     MainWindow w;
-    std::thread thread1(thread1task, &world, &simplePendulum, &PDcontroller, simulationDuration, &w.button1);
+    std::thread thread1(thread1task, &world, &simplePendulum, &PDcontroller, simulationDuration);
+    std::thread thread2(thread2task);
     w.show();
 
     return a.exec();

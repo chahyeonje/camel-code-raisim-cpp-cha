@@ -5,7 +5,7 @@
 #ifndef RAISIM_SIMPLEPENDULUMPDCONTROLLER_H
 #define RAISIM_SIMPLEPENDULUMPDCONTROLLER_H
 
-#include "../../include/Controller.h"
+#include "include/CAMEL/Controller.h"
 
 class SimplePendulumPDController : public Controller {
 public:

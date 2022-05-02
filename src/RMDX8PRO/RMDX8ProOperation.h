@@ -5,7 +5,7 @@
 #ifndef RAISIM_RMDX8PROOPERATION_H
 #define RAISIM_RMDX8PROOPERATION_H
 
-#include "../../include/Operation.h"
+#include "include/CAMEL/Operation.h"
 #include "RMDX8ProRobot.h"
 #include "RMDX8ProPDController.h"
 

@@ -5,8 +5,8 @@
 #ifndef RAISIM_RMDX8PROROBOT_H
 #define RAISIM_RMDX8PROROBOT_H
 
-#include "../../include/Robot.h"
-#include "../../include/CanMotorX8Pro.h"
+#include "include/CAMEL/Robot.h"
+#include "include/CAN/CanMotorX8Pro.h"
 
 class RMDX8ProRobot: public Robot{
 public:
