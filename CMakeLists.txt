@@ -57,5 +57,5 @@ add_executable(camel-rmd8xoperation src/RMDX8PRO/RMDX8ProOperation.cpp src/RMDX8
 target_link_libraries(camel-rmd8xoperation Qt5::Widgets raisim::raisim pthread)
 
 # if you try to include any Qt UI CLASS, you must have to add following two sentences.
-add_executable(camel-simplePendulum src/SimplePendulum/SimplePendulumSimulation.cpp include/SimulationUI/simulationMainwindow.cpp include/SimulationUI/qcustomplot.cpp)
+add_executable(camel-simplePendulum src/SimplePendulum/SimplePendulumSimulation.cpp include/SimulationUI/simulationMainwindow.cpp include/SimulationUI/qcustomplot.cpp src/SimplePendulum/SimplePendulumPDController.cpp src/SimplePendulum/SimplePendulumRobot.cpp)
 target_link_libraries(camel-simplePendulum Qt5::Widgets raisim::raisim pthread)
