@@ -5,8 +5,15 @@
 #ifndef RAISIM_A1SIMULATION_H
 #define RAISIM_A1SIMULATION_H
 
+#include "include/CAMEL/Simulation.h"
+#include "A1Robot.h"
+#include "A1JointPDController.h"
 
-class A1Simulation {
+class A1Simulation : public Simulation{
+public:
+    A1Simulation(raisim::World *world, double dT) : Simulation(world, dT) { ; }
+
+private:
 
 };
 

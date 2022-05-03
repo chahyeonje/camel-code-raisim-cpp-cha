@@ -61,5 +61,5 @@ target_link_libraries(camel-rmd8xoperation Qt5::Widgets raisim::raisim pthread)
 add_executable(camel-simplePendulum src/SimplePendulum/SimplePendulumSimulation.cpp include/SimulationUI/simulationMainwindow.cpp include/SimulationUI/qcustomplot.cpp src/SimplePendulum/SimplePendulumPDController.cpp src/SimplePendulum/SimplePendulumRobot.cpp)
 target_link_libraries(camel-simplePendulum Qt5::Widgets raisim::raisim pthread)
 
-add_executable(camel-a1 src/A1/A1Simulation.cpp src/A1/A1Robot.cpp src/A1/A1Robot.h src/A1/A1JointPDController.cpp src/A1/A1JointPDController.h)
+add_executable(camel-a1 src/A1/A1Simulation.cpp src/A1/A1Robot.cpp src/A1/A1Robot.h src/A1/A1JointPDController.cpp src/A1/A1JointPDController.h include/SimulationUI/simulationMainwindow.cpp include/SimulationUI/qcustomplot.cpp)
 target_link_libraries(camel-a1 Qt5::Widgets raisim::raisim pthread)
