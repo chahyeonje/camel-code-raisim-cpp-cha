@@ -26,7 +26,7 @@ void thread1task(raisim::World *world, A1Robot *robot, A1JointPDController *cont
                 controller->doControl();
                 world->integrate();
                 if (i % divider == 0) {
-                    std::cout<<"data_idx : "<<MainUI->data_idx<<std::endl;
+//                    std::cout<<"data_idx : "<<MainUI->data_idx<<std::endl;
                     MainUI->data_x[MainUI->data_idx] = world->getWorldTime();
                     MainUI->data_y1[MainUI->data_idx] = robot->getQ()[0];
                     MainUI->data_y2[MainUI->data_idx] = robot->getQD()[0];
@@ -61,7 +61,7 @@ void thread2task()
 {
     while(true)
     {
-        std::this_thread::sleep_for(std::chrono::microseconds(1000));
+        std::this_thread::sleep_for(std::chrono::microseconds(500));
         timeChecker = true;
     }
 }
