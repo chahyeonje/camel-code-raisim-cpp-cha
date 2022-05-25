@@ -1,4 +1,5 @@
 <!-- author : Jaehoon An, Jaehyung Park -->
+<!-- TODO: inertia should be updated by Hwa-young Song -->
 <?xml version="1.0" ?>
 <robot name="camel_single_leg_bot">
   <material name="black">

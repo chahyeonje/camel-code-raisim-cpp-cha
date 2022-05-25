@@ -7,9 +7,9 @@
 
 #include "include/CAMEL/Robot.h"
 
-class SingleLegRobot: public Robot{
+class SingleLeggedRobot: public Robot{
 public:
-    SingleLegRobot(raisim::World *world, std::string urdfPath, std::string name) : Robot(world, urdfPath, name){
+    SingleLeggedRobot(raisim::World *world, std::string urdfPath, std::string name) : Robot(world, urdfPath, name){
         initialize();}
     void initialize() override;
     raisim::VecDyn getQ();

@@ -7,7 +7,7 @@
 
 #include "include/CAMEL/Controller.h"
 
-class SingleLegPDController : public Controller {
+class SingleLeggedPDController : public Controller {
 public:
     Eigen::VectorXd torque = Eigen::VectorXd(3);
     raisim::VecDyn position = raisim::VecDyn(3);
@@ -24,7 +24,7 @@ public:
     double DGain;
     double torqueLimit = 10.0;
 
-    SingleLegPDController(Robot *robot) : Controller(robot) {
+    SingleLeggedPDController(Robot *robot) : Controller(robot) {
         setTrajectory();
         setPDGain(200.0, 25.0);
         torque[0] = 0.0;

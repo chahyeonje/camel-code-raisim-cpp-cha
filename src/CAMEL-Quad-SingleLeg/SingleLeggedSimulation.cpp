@@ -10,7 +10,7 @@
 extern MainWindow *MainUI;
 bool timeChecker = false;
 
-void thread1task(raisim::World *world, SingleLegRobot *robot, Controller *controller, double simulationDuration) {
+void thread1task(raisim::World *world, SingleLeggedRobot *robot, Controller *controller, double simulationDuration) {
     double dT = world -> getTimeStep();
     double oneCycleSimTime = 0;
     int divider = ceil(simulationDuration / dT / 200);
@@ -57,8 +57,8 @@ int main(int argc, char *argv[]) {
 
     double simulationDuration = 10.0;
     SingleLeggedSimulation sim = SingleLeggedSimulation(&world, 0.001);
-    SingleLegRobot singleLeg= SingleLegRobot(&world, urdfPath, name);
-    SingleLegPDController PDcontroller = SingleLegPDController(&singleLeg);
+    SingleLeggedRobot singleLeg= SingleLeggedRobot(&world, urdfPath, name);
+    SingleLeggedPDController PDcontroller = SingleLeggedPDController(&singleLeg);
 
     raisim::RaisimServer server(&world);
     server.launchServer(8080);
