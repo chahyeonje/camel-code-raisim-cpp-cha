@@ -205,7 +205,7 @@ void SingleLegCAN::turnOnMotor(int motorID) {
 // 37. Torque closed-loop command (0xA1)
 // torque_int : 0 ~ 4096 which matches to (-32A ~ 32A)
 void SingleLegCAN::setTorque(int motorID, double torque) {
-    int torque_int = round((torque - 0.05466845454545443) / 0.03936824733201581);
+    int torque_int = round(24.5737034 * torque + 2.450790188);
     if (torque_int < 0) {
         torque_int += +2 * pow(2, 15);
     }
