@@ -8,9 +8,9 @@
 #include "include/CAMEL/Operation.h"
 #include "SingleLeggedRobotOperation.h"
 
-class SingleLeggedOperation : public Operation{
+class SingleLeggedOperation : public Operation {
 public:
-    SingleLeggedOperation(raisim::World *world, double fps) : Operation(world, fps){;}
+    SingleLeggedOperation(raisim::World *world, double fps) : Operation(world, fps) { ; }
 
 private:
 };

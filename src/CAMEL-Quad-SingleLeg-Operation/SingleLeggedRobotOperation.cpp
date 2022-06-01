@@ -19,11 +19,12 @@ void SingleLeggedRobotOperation::visualize() {
     mJointPosition[2] = -(mCan->getAngularPosition1() - mKneeOffset);
     robot->setGeneralizedCoordinate(mJointPosition);
 }
-raisim::VecDyn SingleLeggedRobotOperation::getQ(){
+
+raisim::VecDyn SingleLeggedRobotOperation::getQ() {
     return this->robot->getGeneralizedCoordinate();
 }
 
-raisim::VecDyn SingleLeggedRobotOperation::getQD(){
+raisim::VecDyn SingleLeggedRobotOperation::getQD() {
     return this->robot->getGeneralizedVelocity();
 }
 

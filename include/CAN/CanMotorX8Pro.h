@@ -55,7 +55,7 @@ public:
 
     void readMotorStatus2(int motorID);
 
-    void setTorque(int motorID ,double torque);
+    void setTorque(int motorID, double torque);
 
     void setVelocity(int motorID, int Velocity);
 
@@ -216,9 +216,9 @@ void CanMotorX8Pro::readMultiturnAngularPosition(int motorID) {
     canSend(data, motorID);
     canRead();
     double degree = (mFrame.data[1] + mFrame.data[2] * 256.0 + mFrame.data[3] * 256.0 * 256.0 +
-                    mFrame.data[4] * 256.0 * 256.0 * 256.0 +
-                    mFrame.data[5] * 256.0 * 256.0 * 256.0 * 256.0 +
-                    mFrame.data[6] * 256.0 * 256.0 * 256.0 * 256.0 * 256.0) * 0.01 / mGearRatio;
+                     mFrame.data[4] * 256.0 * 256.0 * 256.0 +
+                     mFrame.data[5] * 256.0 * 256.0 * 256.0 * 256.0 +
+                     mFrame.data[6] * 256.0 * 256.0 * 256.0 * 256.0 * 256.0) * 0.01 / mGearRatio;
     if (mFrame.data[7] == 1) {
         degree = -1.0 * degree;
     }
