@@ -10,13 +10,9 @@
 #include "SingleLeggedPDController.h"
 
 
-//
-
-
 class SingleLeggedSimulation : public Simulation {
 
 public:
-
     SingleLeggedSimulation(raisim::World *world, double dT) : Simulation(world, dT) { ; }
 
 private:

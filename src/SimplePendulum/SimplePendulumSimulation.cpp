@@ -7,18 +7,19 @@
 #include <QApplication>
 #include <thread>
 #include <cmath>
+
 extern MainWindow *MainUI;
 bool timeChecker = false;
 
 void thread1task(raisim::World *world, SimplePendulumRobot *robot, Controller *controller, double simulationDuration) {
-    double dT = world -> getTimeStep();
+    double dT = world->getTimeStep();
     double oneCycleSimTime = 0;
     int divider = ceil(simulationDuration / dT / 200);
     int i = 0;
 //    auto begin = std::chrono::high_resolution_clock::now();
 //    auto end = std::chrono::high_resolution_clock::now();
     while (true) {
-        if(timeChecker) {
+        if (timeChecker) {
             if ((MainUI->button1) && (oneCycleSimTime < simulationDuration)) {
                 // control robot and data plot thread
 //                if(i == 0){begin = std::chrono::high_resolution_clock::now();}
@@ -49,13 +50,11 @@ void thread1task(raisim::World *world, SimplePendulumRobot *robot, Controller *c
     }
 }
 
-void thread2task()
-{
-    while(true)
-        {
-            std::this_thread::sleep_for(std::chrono::microseconds(100));
-            timeChecker = true;
-        }
+void thread2task() {
+    while (true) {
+        std::this_thread::sleep_for(std::chrono::microseconds(100));
+        timeChecker = true;
+    }
 }
 
 int main(int argc, char *argv[]) {

@@ -86,7 +86,6 @@ private:
     int mSock;
     int mSendedCommand;
     int mGearRatio = 9;
-
     u_int32_t mCanID;
 };
 

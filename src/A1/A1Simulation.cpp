@@ -7,18 +7,19 @@
 #include <QApplication>
 #include <thread>
 #include <cmath>
+
 extern MainWindow *MainUI;
 bool timeChecker = false;
 
 void thread1task(raisim::World *world, A1Robot *robot, A1JointPDController *controller, double simulationDuration) {
-    double dT = world -> getTimeStep();
+    double dT = world->getTimeStep();
     double oneCycleSimTime = 0;
     int divider = ceil(simulationDuration / dT / 200);
     int i = 0;
 //    auto begin = std::chrono::high_resolution_clock::now();
 //    auto end = std::chrono::high_resolution_clock::now();
     while (true) {
-        if(timeChecker) {
+        if (timeChecker) {
             if ((MainUI->button1) && (oneCycleSimTime < simulationDuration)) {
                 // control robot and data plot thread
 //                if(i == 0){begin = std::chrono::high_resolution_clock::now();}
@@ -46,21 +47,18 @@ void thread1task(raisim::World *world, A1Robot *robot, A1JointPDController *cont
                 MainUI->data_idx = 0;
             }
 
-            if((world -> getWorldTime()) > 5.0)
-            {
+            if ((world->getWorldTime()) > 5.0) {
                 Eigen::VectorXd positionTarget(12), velocityTarget(12);
                 positionTarget << 0.0, 0.5, -1.2, 0.0, 0.5, -1.2, 0.0, 0.5, -1.2, 0.0, 0.5, -1.2;
                 velocityTarget.setZero();
-                controller ->updateJointTrajectory(positionTarget, velocityTarget);
+                controller->updateJointTrajectory(positionTarget, velocityTarget);
             }
         }
     }
 }
 
-void thread2task()
-{
-    while(true)
-    {
+void thread2task() {
+    while (true) {
         std::this_thread::sleep_for(std::chrono::microseconds(500));
         timeChecker = true;
     }

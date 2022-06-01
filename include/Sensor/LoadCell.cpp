@@ -4,40 +4,28 @@
 
 #include "LoadCell.h"
 
-void LoadCell::readData()
-{
+void LoadCell::readData() {
     mReadedData = 0;
-    while(true)
-    {
+    while (true) {
         mNumBytes = read(mSerialPort, &mReadBuf, sizeof(mReadBuf));
-        if(mNumBytes == 1)
-        {
-            if(mReadBuf[0] == mLineFeedCode)
-            {
+        if (mNumBytes == 1) {
+            if (mReadBuf[0] == mLineFeedCode) {
                 break;
-            }
-            else if(mReadBuf[0] == mSplitCode)
-            {
+            } else if (mReadBuf[0] == mSplitCode) {
                 mIsDataStore = false;
-            }
-            else if(mReadBuf[0] == mNegativeValueCode)
-            {
+            } else if (mReadBuf[0] == mNegativeValueCode) {
                 mIsNegativeValue = true;
-            }
-            else if(mIsDataStore)
-            {
+            } else if (mIsDataStore) {
                 mReaded[mIdx] = (mReadBuf[0] - 48);
                 mIdx++;
             }
         }
     }
 
-    for(int i = 0; i<mIdx ; i++)
-    {
+    for (int i = 0; i < mIdx; i++) {
         mReadedData += mReaded[i] * pow(10.0, mIdx - i - 1);
     }
-    if(mIsNegativeValue)
-    {
+    if (mIsNegativeValue) {
         mReadedData = -1.0 * mReadedData;
     }
     mSensoredWeight = mReadedData * mInclineWeight + mBiasWeight;
@@ -51,30 +39,28 @@ void LoadCell::readData()
 
 void LoadCell::autoCalibration() {
     // it takes 2 seconds.
-    std::cout<<"auto calibration is now running."<<std::endl;
+    std::cout << "auto calibration is now running." << std::endl;
     double tempSumedForce = 0;
     double tempSumedWeight = 0;
     double tempBiasForce = 0;
     double tempBiasWeight = 0;
-    for(int i = 0; i<400 ; i++)
-    {
+    for (int i = 0; i < 400; i++) {
         readData();
         tempSumedForce += getSensoredForce();
         tempSumedWeight += getSensoredWeight();
     }
-    std::cout<<tempSumedWeight<<std::endl;
+    std::cout << tempSumedWeight << std::endl;
     tempBiasForce = tempSumedForce / 400.0;
     tempBiasWeight = tempSumedWeight / 400.0;
 
-    std::cout<<mBiasWeight<<std::endl;
+    std::cout << mBiasWeight << std::endl;
     mBiasForce -= tempBiasForce;
     mBiasWeight -= tempBiasWeight;
-    std::cout<<mBiasWeight<<std::endl;
+    std::cout << mBiasWeight << std::endl;
 }
 
 void LoadCell::flushData(int num) {
-    for(int i = 0; i<num ; i++)
-    {
+    for (int i = 0; i < num; i++) {
         readData();
     }
 }

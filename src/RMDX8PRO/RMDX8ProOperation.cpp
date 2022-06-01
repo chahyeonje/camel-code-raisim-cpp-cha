@@ -10,7 +10,8 @@
 double deg2rad = 3.141592 / 180.0;
 double rad2deg = 180.0 / 3.141592;
 
-void thread1task(bool *button1Pressed, bool *button2Pressed, bool *button3Pressed, bool *button4Pressed, bool *button5Pressed, bool *button6Pressed) {
+void thread1task(bool *button1Pressed, bool *button2Pressed, bool *button3Pressed, bool *button4Pressed,
+                 bool *button5Pressed, bool *button6Pressed) {
     std::string canName_temp = "can8";
     std::string bitRate = "1000000";
     char *canName = "can8";
@@ -24,48 +25,42 @@ void thread1task(bool *button1Pressed, bool *button2Pressed, bool *button3Presse
     RMDX8ProPDContorller PDcontroller = RMDX8ProPDContorller(&rmdX8);
     raisim::RaisimServer server(&world);
 
-    while (true)
-    {
+    while (true) {
         usleep(1000);
         PDcontroller.updateState();
 
-        if (*button1Pressed)
-        {
+        if (*button1Pressed) {
             // CAN initialize
             if (canX8pro.getSock() < 0) {
                 std::cout << "Failed to creat CAN" << std::endl;
                 break;
             }
-            std::cout<<"Success to initialize CAN communication"<<std::endl;
+            std::cout << "Success to initialize CAN communication" << std::endl;
             *button1Pressed = false;
         }
 
-        if(*button2Pressed)
-        {
+        if (*button2Pressed) {
             // Raisim initialize
 
             server.launchServer(8080);
             sleep(5);
             *button2Pressed = false;
-            std::cout<<"Success to initialize Raisim"<<std::endl;
+            std::cout << "Success to initialize Raisim" << std::endl;
         }
 
-        if (*button3Pressed)
-        {
+        if (*button3Pressed) {
             // Motor On
             rmdX8.motorOn(0x141);
             *button3Pressed = false;
         }
 
-        if (*button4Pressed)
-        {
+        if (*button4Pressed) {
             // Motor Off
             rmdX8.motorOff(0x141);
             *button4Pressed = false;
         }
 
-        if (*button5Pressed)
-        {
+        if (*button5Pressed) {
             // Start Control
             int iteration = 0;
             while (true) {
@@ -81,8 +76,7 @@ void thread1task(bool *button1Pressed, bool *button2Pressed, bool *button3Presse
             *button5Pressed = false;
         }
 
-        if (*button6Pressed)
-        {
+        if (*button6Pressed) {
             // Generate new trajectory
             PDcontroller.setTrajectory(3.141592 * 1.0, 0.0);
             *button6Pressed = false;

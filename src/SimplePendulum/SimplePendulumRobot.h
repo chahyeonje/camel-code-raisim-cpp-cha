@@ -7,15 +7,16 @@
 
 #include "include/CAMEL/Robot.h"
 
-class SimplePendulumRobot: public Robot{
+class SimplePendulumRobot : public Robot {
 public:
-    SimplePendulumRobot(raisim::World *world, std::string urdfPath, std::string name) : Robot(world, urdfPath, name){
-        initialize();}
+    SimplePendulumRobot(raisim::World *world, std::string urdfPath, std::string name) : Robot(world, urdfPath, name) {
+        initialize();
+    }
+
     void initialize() override;
     double getQ();
     double getQD();
 };
-
 
 
 #endif //RAISIM_SIMPLEPENDULUMROBOT_H

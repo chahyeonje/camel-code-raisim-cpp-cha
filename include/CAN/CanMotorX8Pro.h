@@ -38,27 +38,16 @@ public:
     double enc2rad = 2 * 3.141592 / 65535;
 
     void initCanInterface(const char *CanName);
-
     void stopMotor(int motorID);
-
     void turnOnMotor(int motorID);
-
     void turnOffMotor(int motorID);
-
     void canSend(const u_int8_t *data, int motorID);
-
     void canRead();
-
     void readEncoder(int motorID);
-
     void readMultiturnAngularPosition(int motorID);
-
     void readMotorStatus2(int motorID);
-
     void setTorque(int motorID, double torque);
-
     void setVelocity(int motorID, int Velocity);
-
     void setPosition1(int motorID, double position);
 
     int getSock() { return mSock; }
@@ -153,14 +142,6 @@ void CanMotorX8Pro::canRead() {
         }
     }
 }
-
-
-
-
-
-
-
-
 
 // 1. Read Position loop KP data command (0x30)
 // 2. Read Position lop Ki data command (0x31)

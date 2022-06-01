@@ -75,7 +75,7 @@
  *  17: RL_calf
  */
 
-class A1JointPDController : public Controller{
+class A1JointPDController : public Controller {
 public:
     Eigen::VectorXd torque = Eigen::VectorXd(18);
     raisim::VecDyn position = raisim::VecDyn(19);
@@ -113,17 +113,11 @@ public:
     }
 
     void doControl() override;
-
     void setTrajectory() override;
-
     void updateJointTrajectory(Eigen::VectorXd desiredPosition, Eigen::VectorXd desiredVelocity);
-
     void updateState() override;
-
     void computeControlInput() override;
-
     void setControlInput() override;
-
     void setPDGain(double PGain, double DGain);
 
 private:

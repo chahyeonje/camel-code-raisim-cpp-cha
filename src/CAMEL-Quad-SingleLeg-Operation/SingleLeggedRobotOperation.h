@@ -17,15 +17,10 @@ public:
     }
 
     void initialize() override;
-
     void visualize();
-
     raisim::VecDyn getQ();
-
     raisim::VecDyn getQD();
-
     double getPlot1();
-
     double getPlot2();
 
 private:

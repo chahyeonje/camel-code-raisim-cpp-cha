@@ -15,14 +15,14 @@ public:
     bool isConnected = true;
     bool isTtySet = true;
     bool isReaded = true;
-    LoadCell()
-    {
+
+    LoadCell() {
         mSerialPort = open("/dev/ttyUSB0", O_RDWR);
-        if(tcgetattr(mSerialPort, &mTty) != 0) {
+        if (tcgetattr(mSerialPort, &mTty) != 0) {
             printf("Error %i from tcgetattr: %s\n", errno, strerror(errno));
             isConnected = false;
         }
-        std::cout<<"USB serial communication is successfully connected."<<std::endl;
+        std::cout << "USB serial communication is successfully connected." << std::endl;
         sleep(1);
         mTty.c_cflag &= ~PARENB; // Clear parity bit, disabling parity (most common)
         mTty.c_cflag &= ~CSTOPB; // Clear stop field, only one stop bit used in communication (most common)
@@ -37,7 +37,8 @@ public:
         mTty.c_lflag &= ~ECHONL; // Disable new-line echo
         mTty.c_lflag &= ~ISIG; // Disable interpretation of INTR, QUIT and SUSP
         mTty.c_iflag &= ~(IXON | IXOFF | IXANY); // Turn off s/w flow ctrl
-        mTty.c_iflag &= ~(IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL); // Disable any special handling of received bytes
+        mTty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR |
+                          ICRNL); // Disable any special handling of received bytes
 
         mTty.c_oflag &= ~OPOST; // Prevent special interpretation of output bytes (e.g. newline chars)
         mTty.c_oflag &= ~ONLCR; // Prevent conversion of newline to carriage return/line feed
@@ -53,7 +54,7 @@ public:
             printf("Error %i from tcsetattr: %s\n", errno, strerror(errno));
             isTtySet = false;
         }
-        std::cout<<"tty setting is successfully set."<<std::endl;
+        std::cout << "tty setting is successfully set." << std::endl;
         sleep(1);
         memset(&mReadBuf, '\0', sizeof(mReadBuf));
         mNumBytes = read(mSerialPort, &mReadBuf, sizeof(mReadBuf));
@@ -63,17 +64,22 @@ public:
             printf("Error reading: %s", strerror(errno));
             isReaded = false;
         }
-        std::cout<<"Success to initialize USB serial COM communication for LoadCell."<<std::endl;
+        std::cout << "Success to initialize USB serial COM communication for LoadCell." << std::endl;
 
         flushData(10);
         autoCalibration();
     }
+
     void readData();
     void autoCalibration();
     void flushData(int num);
-    double getSensoredWeight(){return mSensoredWeight ;}
-    double getSensoredForce(){return mSensoredForce ;}
-    int getRawData(){return mReadedData;}
+
+    int getRawData() { return mReadedData; }
+
+    double getSensoredWeight() { return mSensoredWeight; }
+
+    double getSensoredForce() { return mSensoredForce; }
+
 
 private:
     int mSerialPort;
@@ -85,7 +91,7 @@ private:
     int mReadedData = 0;
     int mIdx = 0;
 
-    char mReadBuf [1];
+    char mReadBuf[1];
 
     bool mIsDataStore = true;
     bool mIsNegativeValue = false;

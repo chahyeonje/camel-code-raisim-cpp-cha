@@ -8,12 +8,14 @@
 #include "include/CAMEL/Robot.h"
 #include "include/CAN/CanMotorX8Pro.h"
 
-class RMDX8ProRobot: public Robot{
+class RMDX8ProRobot : public Robot {
 public:
-    RMDX8ProRobot(raisim::World *world, std::string urdfPath, std::string name, CanMotorX8Pro *canMotorX8) : Robot(world, urdfPath, name){
+    RMDX8ProRobot(raisim::World *world, std::string urdfPath, std::string name, CanMotorX8Pro *canMotorX8) : Robot(
+            world, urdfPath, name) {
         mCanMotorX8 = canMotorX8;
         initialize();
     }
+
     void motorOn(int motorID);
     void motorOff(int motorID);
     void initialize() override;
@@ -22,7 +24,7 @@ public:
     double getQD(int motorID);
 
 private:
-    CanMotorX8Pro* mCanMotorX8;
+    CanMotorX8Pro *mCanMotorX8;
 };
 
 void RMDX8ProRobot::initialize() {
@@ -32,13 +34,13 @@ void RMDX8ProRobot::initialize() {
     robot->setGeneralizedCoordinate(initialJointPosition);
 }
 
-double RMDX8ProRobot::getQ(int motorID){
+double RMDX8ProRobot::getQ(int motorID) {
     // from motor value
     mCanMotorX8->readMultiturnAngularPosition(motorID);
     return mCanMotorX8->getAngularPosition();
 }
 
-double RMDX8ProRobot::getQD(int motorID){
+double RMDX8ProRobot::getQD(int motorID) {
     // from motor value
     mCanMotorX8->readMotorStatus2(motorID);
     return mCanMotorX8->getAngularVelocity();
@@ -48,13 +50,12 @@ void RMDX8ProRobot::setTorque(int motorID, int torque_int) {
     mCanMotorX8->setTorque(motorID, torque_int);
 }
 
-void RMDX8ProRobot::motorOn(int motorID)
-{
+void RMDX8ProRobot::motorOn(int motorID) {
     mCanMotorX8->turnOnMotor(motorID);
 }
 
-void RMDX8ProRobot::motorOff(int motorID)
-{
+void RMDX8ProRobot::motorOff(int motorID) {
     mCanMotorX8->turnOffMotor(motorID);
 }
+
 #endif //RAISIM_RMDX8PROROBOT_H

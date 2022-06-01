@@ -7,16 +7,17 @@
 #include <QApplication>
 #include <thread>
 #include <cmath>
+
 extern MainWindow *MainUI;
 bool timeChecker = false;
 
 void thread1task(raisim::World *world, SingleLeggedRobot *robot, Controller *controller, double simulationDuration) {
-    double dT = world -> getTimeStep();
+    double dT = world->getTimeStep();
     double oneCycleSimTime = 0;
     int divider = ceil(simulationDuration / dT / 200);
     int i = 0;
     while (true) {
-        if(timeChecker) {
+        if (timeChecker) {
             if ((MainUI->button1) && (oneCycleSimTime < simulationDuration)) {
                 oneCycleSimTime = i * dT;
                 controller->doControl();
@@ -41,13 +42,11 @@ void thread1task(raisim::World *world, SingleLeggedRobot *robot, Controller *con
     }
 }
 
-void thread2task()
-{
-    while(true)
-        {
-            std::this_thread::sleep_for(std::chrono::microseconds(100));
-            timeChecker = true;
-        }
+void thread2task() {
+    while (true) {
+        std::this_thread::sleep_for(std::chrono::microseconds(100));
+        timeChecker = true;
+    }
 }
 
 int main(int argc, char *argv[]) {
@@ -57,7 +56,7 @@ int main(int argc, char *argv[]) {
 
     double simulationDuration = 10.0;
     SingleLeggedSimulation sim = SingleLeggedSimulation(&world, 0.001);
-    SingleLeggedRobot singleLeg= SingleLeggedRobot(&world, urdfPath, name);
+    SingleLeggedRobot singleLeg = SingleLeggedRobot(&world, urdfPath, name);
     SingleLeggedPDController PDcontroller = SingleLeggedPDController(&singleLeg);
 
     raisim::RaisimServer server(&world);

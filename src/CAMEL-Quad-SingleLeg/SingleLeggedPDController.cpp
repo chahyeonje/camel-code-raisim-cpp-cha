@@ -26,11 +26,10 @@ void SingleLeggedPDController::updateState() {
 }
 
 void SingleLeggedPDController::computeControlInput() {
-    for(int i = 1; i<3 ; i++)
-    {
-        positionError[i-1] = desiredJointPosition[i-1] - position[i];
-        velocityError[i-1] = desiredJointVelocity[i-1] - velocity[i];
-        torque[i] = PGain * positionError[i-1] + DGain * velocityError[i-1];
+    for (int i = 1; i < 3; i++) {
+        positionError[i - 1] = desiredJointPosition[i - 1] - position[i];
+        velocityError[i - 1] = desiredJointVelocity[i - 1] - velocity[i];
+        torque[i] = PGain * positionError[i - 1] + DGain * velocityError[i - 1];
     }
 }
 

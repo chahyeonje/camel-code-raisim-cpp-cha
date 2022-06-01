@@ -21,10 +21,8 @@ void A1JointPDController::setTrajectory() {
 //    this->desiredVelocity = desiredVelocity;
 }
 
-void A1JointPDController::updateJointTrajectory(Eigen::VectorXd desiredPosition, Eigen::VectorXd desiredVelocity)
-{
-    for(int i = 0; i<12 ; i++)
-    {
+void A1JointPDController::updateJointTrajectory(Eigen::VectorXd desiredPosition, Eigen::VectorXd desiredVelocity) {
+    for (int i = 0; i < 12; i++) {
         this->desiredPosition[i] = desiredPosition[i];
         this->desiredVelocity[i] = desiredVelocity[i];
     }
@@ -37,18 +35,14 @@ void A1JointPDController::updateState() {
 }
 
 void A1JointPDController::computeControlInput() {
-    for(int i = 0; i<12 ; i++)
-    {
-        positionError[i] = desiredPosition[i] - position[i+7];
-        velocityError[i] = desiredVelocity[i] - velocity[i+6];
-        torque[i+6] = (PGain * positionError[i] + DGain * velocityError[i]);
-        if(torque[i+6] > torqueLimit)
-        {
-            torque[i+6] = torqueLimit;
-        }
-        else if(torque[i+6] < -torqueLimit)
-        {
-            torque[i+6] = -torqueLimit;
+    for (int i = 0; i < 12; i++) {
+        positionError[i] = desiredPosition[i] - position[i + 7];
+        velocityError[i] = desiredVelocity[i] - velocity[i + 6];
+        torque[i + 6] = (PGain * positionError[i] + DGain * velocityError[i]);
+        if (torque[i + 6] > torqueLimit) {
+            torque[i + 6] = torqueLimit;
+        } else if (torque[i + 6] < -torqueLimit) {
+            torque[i + 6] = -torqueLimit;
         }
     }
 }

@@ -9,7 +9,7 @@
 #include "A1Robot.h"
 #include "A1JointPDController.h"
 
-class A1Simulation : public Simulation{
+class A1Simulation : public Simulation {
 public:
     A1Simulation(raisim::World *world, double dT) : Simulation(world, dT) { ; }
 

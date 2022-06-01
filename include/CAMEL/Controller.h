@@ -12,15 +12,13 @@ public:
     Controller(Robot *robot) {
         mRobot = robot;
     }
-    Robot *getRobot(){return mRobot;}
+
+    Robot *getRobot() { return mRobot; }
+
     virtual void doControl() = 0;
-
     virtual void setTrajectory() = 0;
-
     virtual void updateState() = 0;
-
     virtual void computeControlInput() = 0;
-
     virtual void setControlInput() = 0;
 
 private:

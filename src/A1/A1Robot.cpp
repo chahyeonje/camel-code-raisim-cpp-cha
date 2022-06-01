@@ -6,7 +6,7 @@
 
 void A1Robot::initialize() {
     Eigen::VectorXd initialJointPosition(robot->getGeneralizedCoordinateDim());
-    std::cout<<robot->getGeneralizedCoordinateDim()<<std::endl;
+    std::cout << robot->getGeneralizedCoordinateDim() << std::endl;
     initialJointPosition.setZero();
 
     // base_x,y,z
@@ -43,10 +43,10 @@ void A1Robot::initialize() {
     robot->setGeneralizedCoordinate(initialJointPosition);
 }
 
-raisim::VecDyn A1Robot::getQ(){
+raisim::VecDyn A1Robot::getQ() {
     return this->robot->getGeneralizedCoordinate();
 }
 
-raisim::VecDyn A1Robot::getQD(){
+raisim::VecDyn A1Robot::getQD() {
     return this->robot->getGeneralizedVelocity();
 }

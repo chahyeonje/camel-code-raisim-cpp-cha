@@ -4,13 +4,14 @@
 
 #ifndef RAISIM_ROBOT_H
 #define RAISIM_ROBOT_H
+
 #include"raisim/World.hpp"
 
 class Robot {
 public:
     raisim::ArticulatedSystem *robot;
 
-    Robot(raisim::World *world, std::string urdfPath, std::string name){
+    Robot(raisim::World *world, std::string urdfPath, std::string name) {
         robot = world->addArticulatedSystem(urdfPath);
         robot->setName(name);
     }

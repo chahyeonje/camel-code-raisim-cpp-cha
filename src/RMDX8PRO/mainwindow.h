@@ -12,8 +12,7 @@ namespace Ui {
     class MainWindow;
 }
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
 Q_OBJECT
 
 public:
@@ -49,7 +48,6 @@ private slots:
 private:
     Ui::MainWindow *ui;
 };
-
 
 
 #endif //RAISIM_SIMULATIONMAINWINDOW_H

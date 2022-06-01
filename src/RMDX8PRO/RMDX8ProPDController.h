@@ -7,7 +7,7 @@
 
 #include "RMDX8ProRobot.h"
 
-class RMDX8ProPDContorller{
+class RMDX8ProPDContorller {
 public:
     double torque;
     double torqueLimit = 10; //integer value
@@ -21,11 +21,12 @@ public:
     double PGain;
     double DGain;
 
-    RMDX8ProPDContorller(RMDX8ProRobot *robot){
+    RMDX8ProPDContorller(RMDX8ProRobot *robot) {
 
         mRobot = robot;
         setPDGain(100.0, 5.0);
     }
+
     void doControl();
 
     void setTrajectory(double desPosition, double desVelocity);
@@ -41,7 +42,7 @@ public:
     bool isTerminateCondition();
 
 private:
-    RMDX8ProRobot* mRobot;
+    RMDX8ProRobot *mRobot;
 
 };
 
@@ -84,13 +85,13 @@ void RMDX8ProPDContorller::setControlInput() {
         torque = -torqueLimit;
     }
     mRobot->setTorque(0x141, torque);
-    std::cout<<"torque : "<<torque<<std::endl;
+    std::cout << "torque : " << torque << std::endl;
 }
 
-bool RMDX8ProPDContorller::isTerminateCondition(){
-    if(abs(positionError)<0.01)
-    {
+bool RMDX8ProPDContorller::isTerminateCondition() {
+    if (abs(positionError) < 0.01) {
         return true;
     }
 }
+
 #endif //RAISIM_RMDX8PROPDCONTROLLER_H
