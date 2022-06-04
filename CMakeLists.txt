@@ -13,64 +13,85 @@ find_package(Qt5 CONFIG REQUIRED COMPONENTS Widgets)
 find_package(raisim CONFIG REQUIRED)
 find_package(Eigen3 REQUIRED HINTS ${Eigen3_HINT})
 
-if(WIN32)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/../raisim/win32/mt_release/bin")
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_SOURCE_DIR}/../raisim/win32/mt_debug/bin")
-    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../rsc" DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE})
-    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../rsc" DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG})
-else()
-    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../rsc" DESTINATION ${CMAKE_BINARY_DIR}/camel-code-raisim-cpp)
-endif()
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../rsc" DESTINATION ${CMAKE_BINARY_DIR}/camel-code-raisim-cpp)
 
-include_directories ( ${EIGEN3_INCLUDE_DIRS} )
+include_directories(${EIGEN3_INCLUDE_DIRS})
 
-#==
-# Build Targets
-#==
+set(CAMEL_LIBS
+        Qt5::Widgets
+        raisim::raisim
+        pthread
+        rt)
 
-function(create_executable app_name file_name)
-    add_executable(${app_name} ${file_name})
-    set_target_properties(${app_name} PROPERTIES MACOSX_RPATH "${CMAKE_CURRENT_SOURCE_DIR}/../raisim/mac/lib")
-    if(WIN32)
-        target_link_libraries(${app_name} PUBLIC raisim::raisim Ws2_32 Winmm)
-        target_compile_options(${app_name} PRIVATE "/MP")
-    else()
-        target_link_libraries(${app_name} PUBLIC raisim::raisim pthread)
-    endif()
+set(CAMEL_SOURCES
+        include/TrajectoryGenerator/CubicTrajectoryGenerator.cpp
+        include/TrajectoryGenerator/QuinticTrajectoryGenerator.cpp
+        include/CAN/CanMotorX8ProV2.h
+        include/Optimizer/GradientDescentOptimizer.cpp
+        include/Sensor/LoadCell.cpp)
 
-    if(APPLE)
-        execute_process(COMMAND sysctl -q hw.optional.arm64
-                OUTPUT_VARIABLE _sysctl_stdout
-                ERROR_VARIABLE _sysctl_stderr
-                RESULT_VARIABLE _sysctl_result
-                )
-        if(_sysctl_result EQUAL 0 AND _sysctl_stdout MATCHES "hw.optional.arm64: 1")
-            target_compile_options(${app_name} PRIVATE -mcpu=apple-m1)
-        endif()
-    endif()
+set(CAMEL_SIMULATION_UI_SOURCES
+        include/SimulationUI/qcustomplot.cpp
+        include/SimulationUI/simulationMainwindow.cpp)
 
-    target_include_directories(${app_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-endfunction()
+## Simulation ##
+# ====== Simple Pendulum ======  #
+set(SIMPLE_PENDULUM_SOURCES
+        src/SimplePendulum/SimplePendulumSimulation.cpp
+        src/SimplePendulum/SimplePendulumRobot.cpp
+        src/SimplePendulum/SimplePendulumPDController.cpp)
 
-create_executable(camel-rmdx8test_torque src/Test/Test_RMDX8Pro.cpp)
+add_executable(camel-simplePendulum ${CAMEL_SOURCES} ${CAMEL_SIMULATION_UI_SOURCES} ${SIMPLE_PENDULUM_SOURCES})
+target_link_libraries(camel-simplePendulum ${CAMEL_LIBS})
+# ====== Simple Pendulum ======/ #
 
-# if you try to include any Qt UI CLASS, you must have to add following two sentences.
+# ====== A1 ======  #
+set(A1_SOURCES
+        src/A1/A1Simulation.cpp
+        src/A1/A1Robot.cpp
+        src/A1/A1JointPDController.cpp)
 
+add_executable(camel-a1 ${CAMEL_SOURCES} ${CAMEL_SIMULATION_UI_SOURCES} ${A1_SOURCES})
+target_link_libraries(camel-a1 ${CAMEL_LIBS})
+# ====== A1 ======/ #
 
-add_executable(camel-simplePendulum src/SimplePendulum/SimplePendulumSimulation.cpp include/SimulationUI/simulationMainwindow.cpp include/SimulationUI/qcustomplot.cpp src/SimplePendulum/SimplePendulumPDController.cpp src/SimplePendulum/SimplePendulumRobot.cpp)
-target_link_libraries(camel-simplePendulum Qt5::Widgets raisim::raisim pthread)
+# ====== Canine Single Leg ======  #
+set(CANINE_SINGLE_LEG_SOURCES
+        src/CAMEL-Quad-SingleLeg/SingleLeggedSimulation.cpp
+        src/CAMEL-Quad-SingleLeg/SingleLeggedRobot.cpp
+        src/CAMEL-Quad-SingleLeg/SingleLeggedPDController.cpp)
 
-add_executable(camel-a1 src/A1/A1Simulation.cpp src/A1/A1Robot.cpp src/A1/A1Robot.h src/A1/A1JointPDController.cpp src/A1/A1JointPDController.h include/SimulationUI/simulationMainwindow.cpp include/SimulationUI/qcustomplot.cpp)
-target_link_libraries(camel-a1 Qt5::Widgets raisim::raisim pthread)
+add_executable(camel-canine_single_leg_simulation ${CAMEL_SOURCES} ${CAMEL_SIMULATION_UI_SOURCES} ${CANINE_SINGLE_LEG_SOURCES})
+target_link_libraries(camel-canine_single_leg_simulation ${CAMEL_LIBS})
+# ====== Canine Single Leg ====== /#
+## Simulation /##
 
-add_executable(camel-single_leg_sim src/CAMEL-Quad-SingleLeg/SingleLeggedSimulation.cpp src/CAMEL-Quad-SingleLeg/SingleLeggedPDController.cpp src/CAMEL-Quad-SingleLeg/SingleLeggedRobot.cpp include/SimulationUI/simulationMainwindow.cpp include/SimulationUI/qcustomplot.cpp)
-target_link_libraries(camel-single_leg_sim Qt5::Widgets raisim::raisim pthread)
+## Operation  ##
+# ====== RMD X8 PRO ======  #
+set(RMDX8PRO_SOURCES
+        src/RMDX8PRO/RMDX8ProOperation.cpp
+        src/RMDX8PRO/mainwindow.cpp
+        src/RMDX8PRO/qcustomplot.cpp)
 
-add_executable(camel-rmd8xoperation src/RMDX8PRO/RMDX8ProOperation.cpp src/RMDX8PRO/mainwindow.cpp src/RMDX8PRO/qcustomplot.cpp)
-target_link_libraries(camel-rmd8xoperation Qt5::Widgets raisim::raisim pthread)
+add_executable(camel-rmdx8operation ${CAMEL_SOURCES} ${RMDX8PRO_SOURCES})
+target_link_libraries(camel-rmdx8operation ${CAMEL_LIBS})
+# ====== RMD X8 PRO ====== /#
 
-add_executable(camel-single_leg_operation src/CAMEL-Quad-SingleLeg-Operation/SingleLeggedOperation.cpp src/CAMEL-Quad-SingleLeg-Operation/SingleLeggedRobotOperation.cpp src/CAMEL-Quad-SingleLeg-Operation/SingleLegCAN.cpp src/CAMEL-Quad-SingleLeg-Operation/mainwindow.cpp src/CAMEL-Quad-SingleLeg-Operation/qcustomplot.cpp src/CAMEL-Quad-SingleLeg-Operation/SingleLegCAN.cpp)
-target_link_libraries(camel-single_leg_operation Qt5::Widgets raisim::raisim pthread)
+# ====== Canine Single Leg ======  #
+set(CANINE_SINGLE_LEG_OPERATION_SOURCES
+        src/CAMEL-Quad-SingleLeg-Operation/SingleLeggedOperation.cpp
+        src/CAMEL-Quad-SingleLeg-Operation/SingleLeggedRobotOperation.cpp
+        src/CAMEL-Quad-SingleLeg-Operation/SingleLegCAN.cpp
+        src/CAMEL-Quad-SingleLeg-Operation/mainwindow.cpp
+        src/CAMEL-Quad-SingleLeg-Operation/qcustomplot.cpp
+        src/CAMEL-Quad-SingleLeg-Operation/SingleLegCAN.cpp
+        src/CAMEL-Quad-SingleLeg-Operation/SingleLeggedPDControllerOperation.cpp
+        include/TrajectoryGenerator/CubicTrajectoryGenerator.cpp)
 
+add_executable(camel-canine_single_leg_operation ${CAMEL_SOURCES} ${CANINE_SINGLE_LEG_OPERATION_SOURCES})
+target_link_libraries(camel-canine_single_leg_operation ${CAMEL_LIBS})
+# ====== Canine Single Leg ====== /#
+## Operation /##
 
 add_executable(camel-test_trajectory_generation src/Test/Test_trajectoryGenerator.cpp include/TrajectoryGenerator/CubicTrajectoryGenerator.cpp)
+add_executable(camel-rmdx8test_torque src/Test/Test_RMDX8Pro.cpp)

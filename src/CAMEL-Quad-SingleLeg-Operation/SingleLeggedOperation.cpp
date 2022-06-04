@@ -16,21 +16,22 @@ void thread1task(bool *button1Pressed, bool *button2Pressed, bool *button3Presse
     std::string bitRate = "1000000";
     char *canName = "can0";
     SingleLegCAN can(canName, canName_temp, bitRate);
-
+    std::cout << "test0" << std::endl;
     std::string urdfPath = "\\home\\jaehoon\\raisimLib\\camel-code-raisim-cpp\\rsc\\camel_single_leg\\camel_single_leg.urdf";
     std::string name = "singleLeg";
     raisim::World world;
-    SingleLeggedOperation realRobot = SingleLeggedOperation(&world, 30);
+    SingleLeggedOperation realRobot = SingleLeggedOperation(&world, 250);
+    std::cout << "test1" << std::endl;
     SingleLeggedRobotOperation singleLeg = SingleLeggedRobotOperation(&world, urdfPath, name, &can);
-//    SingleLeggedPDController PDcontroller = SingleLeggedPDController(&singleLeg);
+    std::cout << "test1" << std::endl;
+    SingleLeggedPDControllerOperation PDcontroller = SingleLeggedPDControllerOperation(&singleLeg);
     raisim::RaisimServer server(&world);
 
     int motorKnee = 0x141;
-    int motorHip = 0x142;
+    int motorHip = 0x143;
+    std::cout << "test1" << std::endl;
     while (true) {
         usleep(1000);
-        can.setTorque(motorHip, 0.0);
-        can.setTorque(motorKnee, 0.0);
         singleLeg.visualize();
 
         if (*button1Pressed) {
@@ -47,7 +48,7 @@ void thread1task(bool *button1Pressed, bool *button2Pressed, bool *button3Presse
             // Raisim initialize
 
             server.launchServer(8080);
-            sleep(5);
+            sleep(3);
             *button2Pressed = false;
             std::cout << "Success to initialize Raisim" << std::endl;
         }
@@ -56,6 +57,9 @@ void thread1task(bool *button1Pressed, bool *button2Pressed, bool *button3Presse
             // Motor On
             can.turnOnMotor(motorKnee);
             can.turnOnMotor(motorHip);
+            can.setTorque(motorHip, 0.0);
+            can.setTorque(motorKnee, 0.0);
+            singleLeg.visualize();
             *button3Pressed = false;
         }
 
@@ -67,18 +71,19 @@ void thread1task(bool *button1Pressed, bool *button2Pressed, bool *button3Presse
         }
 
         if (*button5Pressed) {
-            // Start Control
+//             Start Control
 //            int iteration = 0;
-//            while (true) {
+            PDcontroller.zeroing();
+            PDcontroller.setTrajectory();
+            PDcontroller.setPDGain(50.0, 2.5);
+            while (true) {
 //                iteration++;
-//                PDcontroller.doControl();
-//                if ((PDcontroller.isTerminateCondition()) || (iteration > 1000)) {
-//                    rmdX8.motorOff(0x141);
-//                    break;
-//                }
-//                usleep(1000);
-//                std::cout << "current position : " << PDcontroller.position << std::endl;
-//            }
+                PDcontroller.doControl();
+                singleLeg.visualize();
+                usleep(1000);
+                std::cout << "current position : " << PDcontroller.position << std::endl;
+                std::cout << "current velocity : " << PDcontroller.velocity << std::endl;
+            }
             *button5Pressed = false;
         }
 

@@ -18,17 +18,21 @@ public:
 
     void initialize() override;
     void visualize();
-    raisim::VecDyn getQ();
-    raisim::VecDyn getQD();
+    void setTorque(Eigen::VectorXd torque);
+    Eigen::VectorXd getQ();
+    Eigen::VectorXd getQD();
     double getPlot1();
     double getPlot2();
 
 private:
     SingleLegCAN *mCan;
     Eigen::VectorXd mJointPosition = Eigen::VectorXd(3);
-    double mHipOffset = 0.0; // => -90 deg
-    double mKneeOffset = 2.62547; //
+    Eigen::VectorXd mJointVelocity = Eigen::VectorXd(3);
 
+    double mHipOffset = 0.0; //
+    double mKneeOffset = -3.302511324; //
+    int mMotorKneeID = 0x141;
+    int mMotorHipID = 0x143;
 };
 
 

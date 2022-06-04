@@ -100,7 +100,7 @@ void SingleLegCAN::readEncoder(int motorID) {
     u_int8_t data[8] = {0X90, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00};
     canSend(data, motorID);
     canRead();
-    if (motorID == 0x141) {
+    if (motorID == mMotorKneeID) {
         mEncoderPast1 = mEncoder_temp1;
         mEncoder_temp1 = mFrame.data[2] + mFrame.data[3] * 256;
         mEncoderRaw1 = mFrame.data[4] + mFrame.data[5] * 256;
@@ -113,7 +113,7 @@ void SingleLegCAN::readEncoder(int motorID) {
             mEncoder1 = mEncoder_temp1 + 65535 * mEncoderMultiturnNum1;
             mAngularPosition_rad1 = mEncoder1 * enc2rad / mGearRatio;
         }
-    } else if (motorID == 0x142) {
+    } else if (motorID == mMotorHipID) {
         mEncoderPast2 = mEncoder_temp2;
         mEncoder_temp2 = mFrame.data[2] + mFrame.data[3] * 256;
         mEncoderRaw2 = mFrame.data[4] + mFrame.data[5] * 256;
@@ -146,9 +146,9 @@ void SingleLegCAN::readMultiturnAngularPosition(int motorID) {
     if (mFrame.data[7] == 1) {
         degree = -1.0 * degree;
     }
-    if (motorID == 0x141) {
+    if (motorID == mMotorKneeID) {
         mAngularPosition_rad1 = degree * deg2rad;
-    } else if (motorID == 0x142) {
+    } else if (motorID == mMotorHipID) {
         mAngularPosition_rad2 = degree * deg2rad;
     }
 
@@ -163,14 +163,14 @@ void SingleLegCAN::readMotorStatus2(int motorID) {
     u_int8_t data[8] = {0X9c, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00};
     canSend(data, motorID);
     canRead();
-    if (motorID == 0x141) {
+    if (motorID == mMotorKneeID) {
         mAngularPosition_rad1 = (mFrame.data[6] + mFrame.data[7] * 256) * enc2rad;
         mAngularVelocity_rad1 = mFrame.data[4] + mFrame.data[5] * 256;
         if (mFrame.data[5] > 127) {
             mAngularVelocity_rad1 -= 256 * 256;
         }
         mAngularVelocity_rad1 = mAngularVelocity_rad1 * deg2rad / mGearRatio;
-    } else if (motorID == 0x142) {
+    } else if (motorID == mMotorHipID) {
         mAngularPosition_rad2 = (mFrame.data[6] + mFrame.data[7] * 256) * enc2rad;
         mAngularVelocity_rad2 = mFrame.data[4] + mFrame.data[5] * 256;
         if (mFrame.data[5] > 127) {
@@ -217,8 +217,13 @@ void SingleLegCAN::setTorque(int motorID, double torque) {
     canSend(data, motorID);
     canRead();
 
-    if (motorID == 0x141) {
-        mAngularVelocity_rad1 = (mFrame.data[4] + mFrame.data[5] * 256) * deg2rad;
+    if (motorID == mMotorKneeID) {
+        mAngularVelocity_rad1 = mFrame.data[4] + mFrame.data[5] * 256;
+
+        if (mFrame.data[5] > 127) {
+            mAngularVelocity_rad1 -= 256 * 256;
+        }
+        mAngularVelocity_rad1 = mAngularVelocity_rad1 * deg2rad / mGearRatio;
 
         mEncoderPast1 = mEncoder_temp1;
         mEncoder_temp1 = mFrame.data[6] + mFrame.data[7] * 256;
@@ -230,8 +235,13 @@ void SingleLegCAN::setTorque(int motorID, double torque) {
             mEncoder1 = mEncoder_temp1 + 65535 * mEncoderMultiturnNum1;
             mAngularPosition_rad1 = mEncoder1 * enc2rad / mGearRatio;
         }
-    } else if (motorID == 0x142) {
-        mAngularVelocity_rad2 = (mFrame.data[4] + mFrame.data[5] * 256) * deg2rad;
+    } else if (motorID == mMotorHipID) {
+        mAngularVelocity_rad2 = mFrame.data[4] + mFrame.data[5] * 256;
+
+        if (mFrame.data[5] > 127) {
+            mAngularVelocity_rad2 -= 256 * 256;
+        }
+        mAngularVelocity_rad2 = mAngularVelocity_rad2 * deg2rad / mGearRatio;
 
         mEncoderPast2 = mEncoder_temp2;
         mEncoder_temp2 = mFrame.data[6] + mFrame.data[7] * 256;

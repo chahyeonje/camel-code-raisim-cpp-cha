@@ -16,7 +16,7 @@
 // author@ Jaehyeong Park & Jaehoon An
 /*
     0x141 : knee
-    0x142 : hip
+    0x143 : hip
 */
 
 class SingleLegCAN {
@@ -71,6 +71,8 @@ private:
     double mAngularVelocity_rad1 = 0;
     double mAngularPosition_rad2 = 0;
     double mAngularVelocity_rad2 = 0;
+    int mMotorHipID = 0x143;
+    int mMotorKneeID = 0x141;
     int mEncoder1 = 0;
     int mEncoder2 = 0;
     int mEncoderMultiturnNum1 = 0;

@@ -16,7 +16,7 @@ public:
         this->mWorld = world;
         mWorld->setTimeStep(1 / fps);
         mWorld->addGround();
-        raisim::Vec<3> gravity = {0.0, 0.0, 0.0};
+        raisim::Vec<3> gravity = {0.0, 0.0, -9.81};
         mWorld->setGravity(gravity);
     }
 

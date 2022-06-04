@@ -78,7 +78,7 @@
     <origin rpy="0 0 0" xyz="0 -0.090 0.0"/>
     <parent link="hip_1"/>
     <child link="hip_2"/>
-    <axis xyz="0 1 0"/>
+    <axis xyz="0 -1 0"/>
   </joint>
 
   <link name="hip_2">
@@ -128,7 +128,7 @@
     <origin rpy="0 0 0" xyz="0 0 -0.23"/>
     <parent link="upper_leg"/>
     <child link="lower_leg"/>
-    <axis xyz="0 1 0"/>
+    <axis xyz="0 -1 0"/>
   </joint>
 
   <link name="lower_leg">

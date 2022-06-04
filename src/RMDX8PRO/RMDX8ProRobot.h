@@ -6,7 +6,7 @@
 #define RAISIM_RMDX8PROROBOT_H
 
 #include "include/CAMEL/Robot.h"
-#include "include/CAN/CanMotorX8Pro.h"
+#include "include/CAN/CanMotorX8ProV2.h"
 
 class RMDX8ProRobot : public Robot {
 public:

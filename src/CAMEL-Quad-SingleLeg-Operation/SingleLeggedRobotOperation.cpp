@@ -14,18 +14,24 @@ void SingleLeggedRobotOperation::initialize() {
 }
 
 void SingleLeggedRobotOperation::visualize() {
-    mJointPosition[0] = 0.5;
-    mJointPosition[1] = -(mCan->getAngularPosition2() - mHipOffset);
-    mJointPosition[2] = -(mCan->getAngularPosition1() - mKneeOffset);
+    getQ();
+    getQD();
     robot->setGeneralizedCoordinate(mJointPosition);
+    robot->setGeneralizedVelocity(mJointVelocity);
 }
 
-raisim::VecDyn SingleLeggedRobotOperation::getQ() {
-    return this->robot->getGeneralizedCoordinate();
+Eigen::VectorXd SingleLeggedRobotOperation::getQ() {
+    mJointPosition[0] = 0.23 * cos(mJointPosition[1]) + 0.23 * cos(mJointPosition[1] + mJointPosition[2]);
+    mJointPosition[1] = mCan->getAngularPosition2() + mHipOffset;
+    mJointPosition[2] = mCan->getAngularPosition1() + mKneeOffset;
+    return mJointPosition;
 }
 
-raisim::VecDyn SingleLeggedRobotOperation::getQD() {
-    return this->robot->getGeneralizedVelocity();
+Eigen::VectorXd SingleLeggedRobotOperation::getQD() {
+    mJointVelocity[0] = 0.0;
+    mJointVelocity[1] = mCan->getAngularVelocity2();
+    mJointVelocity[2] = mCan->getAngularVelocity1();
+    return mJointVelocity;
 }
 
 double SingleLeggedRobotOperation::getPlot1() {
@@ -34,4 +40,9 @@ double SingleLeggedRobotOperation::getPlot1() {
 
 double SingleLeggedRobotOperation::getPlot2() {
     return 0;
+}
+
+void SingleLeggedRobotOperation::setTorque(Eigen::VectorXd torque) {
+    mCan ->setTorque(mMotorHipID, torque[0]);
+    mCan ->setTorque(mMotorKneeID, torque[1]);
 }
