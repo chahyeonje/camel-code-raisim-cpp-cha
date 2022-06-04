@@ -93,5 +93,5 @@ target_link_libraries(camel-canine_single_leg_operation ${CAMEL_LIBS})
 # ====== Canine Single Leg ====== /#
 ## Operation /##
 
-add_executable(camel-test_trajectory_generation src/Test/Test_trajectoryGenerator.cpp include/TrajectoryGenerator/CubicTrajectoryGenerator.cpp)
+add_executable(camel-test_trajectory_generation src/Test/Test_trajectoryGenerator.cpp include/TrajectoryGenerator/CubicTrajectoryGenerator.cpp include/TrajectoryGenerator/QuinticTrajectoryGenerator.cpp)
 add_executable(camel-rmdx8test_torque src/Test/Test_RMDX8Pro.cpp)
