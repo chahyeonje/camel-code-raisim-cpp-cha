@@ -28,7 +28,8 @@ set(CAMEL_SOURCES
         include/TrajectoryGenerator/QuinticTrajectoryGenerator.cpp
         include/CAN/CanMotorX8ProV2.h
         include/Optimizer/GradientDescentOptimizer.cpp
-        include/Sensor/LoadCell.cpp)
+        include/Sensor/LoadCell.cpp
+        include/RT/rb_utils.cpp)
 
 set(CAMEL_SIMULATION_UI_SOURCES
         include/SimulationUI/qcustomplot.cpp
@@ -95,3 +96,5 @@ target_link_libraries(camel-canine_single_leg_operation ${CAMEL_LIBS})
 
 add_executable(camel-test_trajectory_generation src/Test/Test_trajectoryGenerator.cpp include/TrajectoryGenerator/CubicTrajectoryGenerator.cpp include/TrajectoryGenerator/QuinticTrajectoryGenerator.cpp)
 add_executable(camel-rmdx8test_torque src/Test/Test_RMDX8Pro.cpp)
+add_executable(camel-test_real_time_thread src/Test/Test_RealTimeThread.cpp ${CAMEL_SOURCES})
+target_link_libraries(camel-test_real_time_thread ${CAMEL_LIBS})
