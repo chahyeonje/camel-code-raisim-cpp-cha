@@ -4,41 +4,53 @@
 
 #include "SimplePendulumSimulation.h"
 #include "include/SimulationUI/simulationMainwindow.h"
+#include "include/RT/rb_utils.h"
 #include <QApplication>
-#include <thread>
 #include <cmath>
 
 extern MainWindow *MainUI;
+pthread_t thread_time_checker;
+pthread_t thread_raisim_visualize;
 bool timeChecker = false;
+std::string urdfPath = "\\home\\jaehoon\\raisimLib\\camel-code-raisim-cpp\\rsc\\camel_simple_pendulum.urdf";
+std::string name = "cutePendulum";
+raisim::World world;
 
-void thread1task(raisim::World *world, SimplePendulumRobot *robot, Controller *controller, double simulationDuration) {
-    double dT = world->getTimeStep();
+double simulationDuration = 5.0;
+double dT = 0.005;
+SimplePendulumSimulation sim = SimplePendulumSimulation(&world, dT);
+SimplePendulumRobot robot = SimplePendulumRobot(&world, urdfPath, name);
+SimplePendulumPDController controller = SimplePendulumPDController(&robot);
+
+void *rt_raisim_visualize_thread(void *arg) {
+    // TODO : Relieve CPU. Now, CPU usage is 100% !!!!!
+    double dT = world.getTimeStep();
     double oneCycleSimTime = 0;
     int divider = ceil(simulationDuration / dT / 200);
     int i = 0;
-//    auto begin = std::chrono::high_resolution_clock::now();
-//    auto end = std::chrono::high_resolution_clock::now();
+    auto begin = std::chrono::high_resolution_clock::now();
+    auto end = std::chrono::high_resolution_clock::now();
     while (true) {
         if (timeChecker) {
             if ((MainUI->button1) && (oneCycleSimTime < simulationDuration)) {
                 // control robot and data plot thread
-//                if(i == 0){begin = std::chrono::high_resolution_clock::now();}
+                if(i == 0){begin = std::chrono::high_resolution_clock::now();}
                 oneCycleSimTime = i * dT;
-                controller->doControl();
-                world->integrate();
+                controller.doControl();
+                world.integrate();
                 if (i % divider == 0) {
                     //                std::cout<<"data_idx : "<<MainUI->data_idx<<std::endl;
-                    MainUI->data_x[MainUI->data_idx] = world->getWorldTime();
-                    MainUI->data_y1[MainUI->data_idx] = robot->getQ();
-                    MainUI->data_y2[MainUI->data_idx] = robot->getQD();
+                    MainUI->data_x[MainUI->data_idx] = world.getWorldTime();
+                    MainUI->data_y1[MainUI->data_idx] = robot.getQ();
+                    MainUI->data_y2[MainUI->data_idx] = robot.getQD();
                     MainUI->data_idx += 1;
                 }
                 i++;
                 timeChecker = false;
             } else if (oneCycleSimTime >= simulationDuration) {
-//                end = std::chrono::high_resolution_clock::now();
-//                auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
-//                std::cout <<" Time measured: "<< elapsed.count() * 1e-9 <<"seconds" <<std::endl;
+                end = std::chrono::high_resolution_clock::now();
+                auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+                std::cout <<" Time measured: "<< elapsed.count() * 1e-9 <<"seconds" <<std::endl;
                 MainUI->button1 = false;
                 i = 0;
                 oneCycleSimTime = 0;
@@ -50,30 +62,34 @@ void thread1task(raisim::World *world, SimplePendulumRobot *robot, Controller *c
     }
 }
 
-void thread2task() {
+void *rt_time_checker_thread(void *arg) {
+    std::cout << "entered #rt_time_checker_thread" << std::endl;
+    struct timespec TIME_NEXT;
+    struct timespec TIME_NOW;
+    const long PERIOD_US = long(dT * 1e6); // 200Hz 짜리 쓰레드
+
+    clock_gettime(CLOCK_REALTIME, &TIME_NEXT);
+    std::cout << "bf #while" << std::endl;
+    std::cout << "control freq : "<< 1/double(PERIOD_US) *1e6 << std::endl;
     while (true) {
-        std::this_thread::sleep_for(std::chrono::microseconds(100));
         timeChecker = true;
+
+        clock_gettime(CLOCK_REALTIME, &TIME_NOW); //현재 시간 구함
+        timespec_add_us(&TIME_NEXT, PERIOD_US);   //목표 시간 구함
+        clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &TIME_NEXT, NULL); //목표시간까지 기다림 (현재시간이 이미 오바되어 있으면 바로 넘어갈 듯)
+        if (timespec_cmp(&TIME_NOW, &TIME_NEXT) > 0) {  // 현재시간이 목표시간 보다 오바되면 경고 띄우기
+            std::cout << "RT Deadline Miss, Time Checker thread : " << timediff_us(&TIME_NEXT, &TIME_NOW) * 0.001 << " ms" << std::endl;
+        }
     }
 }
 
 int main(int argc, char *argv[]) {
-    std::string urdfPath = "\\home\\jaehoon\\raisimLib\\camel-code-raisim-cpp\\rsc\\camel_simple_pendulum.urdf";
-    std::string name = "cutePendulum";
-    raisim::World world;
-
-    double simulationDuration = 10.0;
-    SimplePendulumSimulation sim = SimplePendulumSimulation(&world, 0.001);
-    SimplePendulumRobot simplePendulum = SimplePendulumRobot(&world, urdfPath, name);
-    SimplePendulumPDController PDcontroller = SimplePendulumPDController(&simplePendulum);
-
-    raisim::RaisimServer server(&world);
-    server.launchServer(8080);
-
     QApplication a(argc, argv);
     MainWindow w;
-    std::thread thread1(thread1task, &world, &simplePendulum, &PDcontroller, simulationDuration);
-    std::thread thread2(thread2task);
+    int thread_id_raisimVisualize = generate_rt_thread(thread_raisim_visualize, rt_raisim_visualize_thread, "raisim_visualize_thread", 1, 98, NULL);
+    int thread_id_timeChecker = generate_rt_thread(thread_time_checker, rt_time_checker_thread, "time_checker_thread", 0, 99, NULL);
+    raisim::RaisimServer server(&world);
+    server.launchServer(8080);
     w.show();
 
     return a.exec();
