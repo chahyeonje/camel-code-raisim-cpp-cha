@@ -12,8 +12,7 @@ namespace Ui {
     class MainWindow;
 }
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
 Q_OBJECT
 
 public:
@@ -23,11 +22,13 @@ public:
     int data_idx = 0;
     double data_x[201];
     double data_y1[201];
-    double data_y1_min = 0;
-    double data_y1_max = 0;
+    double data_y1_desired[201];
+    double data_widget1_min = 0;
+    double data_widget1_max = 0;
     double data_y2[201];
-    double data_y2_min = 0;
-    double data_y2_max = 0;
+    double data_y2_desired[201];
+    double data_widget2_min = 0;
+    double data_widget2_max = 0;
 
 public slots:
     void plotWidget1();

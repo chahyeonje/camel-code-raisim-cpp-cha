@@ -10,14 +10,15 @@ void SimplePendulumPDController::setPDGain(double PGain, double DGain) {
 }
 
 void SimplePendulumPDController::doControl() {
+    setTrajectory();
     updateState();
     computeControlInput();
     setControlInput();
 }
 
 void SimplePendulumPDController::setTrajectory() {
-    desiredPosition = -1.57;
-    desiredVelocity = 0.0;;
+    desiredPosition = mTrajectoryGenerator.getPositionTrajectory(getRobot()->getWorldTime());
+    desiredVelocity = mTrajectoryGenerator.getVelocityTrajectory(getRobot()->getWorldTime());
 }
 
 void SimplePendulumPDController::updateState() {

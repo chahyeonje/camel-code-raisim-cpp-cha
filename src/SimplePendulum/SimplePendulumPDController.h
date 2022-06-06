@@ -6,6 +6,7 @@
 #define RAISIM_SIMPLEPENDULUMPDCONTROLLER_H
 
 #include "include/CAMEL/Controller.h"
+#include "include/TrajectoryGenerator/CubicTrajectoryGenerator.h"
 
 class SimplePendulumPDController : public Controller {
 public:
@@ -21,7 +22,8 @@ public:
     double DGain;
 
     SimplePendulumPDController(Robot *robot) : Controller(robot) {
-        setTrajectory();
+        updateState();
+        mTrajectoryGenerator.updateTrajectory(position, -90.0 / 180.0* 3.141592, getRobot() -> getWorldTime(), 5.0);
         setPDGain(200.0, 25.0);
     }
 
@@ -38,6 +40,7 @@ public:
     void setPDGain(double PGain, double DGain);
 
 private:
+    CubicTrajectoryGenerator mTrajectoryGenerator;
 };
 
 

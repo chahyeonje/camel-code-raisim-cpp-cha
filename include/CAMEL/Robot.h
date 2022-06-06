@@ -10,13 +10,17 @@
 class Robot {
 public:
     raisim::ArticulatedSystem *robot;
+    raisim::World *robotWorld;
 
     Robot(raisim::World *world, std::string urdfPath, std::string name) {
+        robotWorld = world;
         robot = world->addArticulatedSystem(urdfPath);
         robot->setName(name);
     }
 
     virtual void initialize() = 0;
+
+    double getWorldTime() { return robotWorld->getWorldTime(); }
 
 private:
 
