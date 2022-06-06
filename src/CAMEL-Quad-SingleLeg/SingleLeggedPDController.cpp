@@ -11,12 +11,13 @@ void SingleLeggedPDController::setPDGain(double PGain, double DGain) {
 
 void SingleLeggedPDController::doControl() {
     updateState();
+    IKsolve();
     computeControlInput();
     setControlInput();
 }
 
 void SingleLeggedPDController::setTrajectory() {
-    desiredPosition = 0.45;
+    desiredPosition = 0.35;
     desiredVelocity = 0.0;
 }
 
@@ -30,9 +31,23 @@ void SingleLeggedPDController::computeControlInput() {
         positionError[i - 1] = desiredJointPosition[i - 1] - position[i];
         velocityError[i - 1] = desiredJointVelocity[i - 1] - velocity[i];
         torque[i] = PGain * positionError[i - 1] + DGain * velocityError[i - 1];
+        if(torque[i] > torqueLimit)
+        {
+            torque[i] = torqueLimit;
+        }
+        else if(torque[i] < -torqueLimit)
+        {
+            torque[i] = -torqueLimit;
+        }
     }
 }
 
 void SingleLeggedPDController::setControlInput() {
     getRobot()->robot->setGeneralizedForce(torque);
+}
+
+void SingleLeggedPDController::IKsolve() {
+    desiredJointPosition[0] = acos(desiredPosition / 0.46);
+    desiredJointPosition[1] = -2*desiredJointPosition[0];
+    desiredJointVelocity.setZero();
 }

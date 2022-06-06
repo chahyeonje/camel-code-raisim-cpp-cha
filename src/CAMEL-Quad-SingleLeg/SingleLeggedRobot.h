@@ -17,8 +17,6 @@ public:
     void initialize() override;
     raisim::VecDyn getQ();
     raisim::VecDyn getQD();
-    double getPlot1();
-    double getPlot2();
 
 private:
     double mMass = 0.0;             // should be update to real mass value

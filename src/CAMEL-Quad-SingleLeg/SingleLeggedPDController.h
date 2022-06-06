@@ -36,6 +36,7 @@ public:
     void computeControlInput() override;
     void setControlInput() override;
     void setPDGain(double PGain, double DGain);
+    void IKsolve();
 
 private:
 };
