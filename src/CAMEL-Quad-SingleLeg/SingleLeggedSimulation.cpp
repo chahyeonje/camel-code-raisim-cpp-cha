@@ -37,6 +37,8 @@ void raisimSimulation() {
                 MainUI->data_y1_desired[MainUI->data_idx] = controller.desiredPosition;
                 MainUI->data_y2[MainUI->data_idx] = robot.getQD()[0];
                 MainUI->data_y2_desired[MainUI->data_idx] = controller.desiredVelocity;
+//                MainUI->data_y2[MainUI->data_idx] = controller.torque[1];
+//                MainUI->data_y2_desired[MainUI->data_idx] = controller.torque[2];
                 MainUI->data_idx += 1;
             }
             i++;
