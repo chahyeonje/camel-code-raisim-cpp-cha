@@ -19,7 +19,9 @@ double simulationDuration = 1.0;
 double dT = 0.001;
 SingleLeggedSimulation sim = SingleLeggedSimulation(&world, 0.001);
 SingleLeggedRobot robot = SingleLeggedRobot(&world, urdfPath, name);
-SingleLeggedPDController controller = SingleLeggedPDController(&robot);
+
+//SingleLeggedPDController controller = SingleLeggedPDController(&robot);
+SingleLeggedIDController controller = SingleLeggedIDController(&robot);
 
 void raisimSimulation() {
     double dT = world.getTimeStep();

@@ -8,7 +8,7 @@
 #include "include/CAMEL/Simulation.h"
 #include "SingleLeggedRobot.h"
 #include "SingleLeggedPDController.h"
-
+#include "SingleLeggedIDController.h"
 
 class SingleLeggedSimulation : public Simulation {
 

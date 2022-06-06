@@ -28,15 +28,10 @@ public:
     }
 
     void doControl() override;
-
     void setTrajectory() override;
-
     void updateState() override;
-
     void computeControlInput() override;
-
     void setControlInput() override;
-
     void setPDGain(double PGain, double DGain);
 
 private:

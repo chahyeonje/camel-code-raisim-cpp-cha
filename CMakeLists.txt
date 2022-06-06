@@ -60,7 +60,8 @@ target_link_libraries(camel-a1 ${CAMEL_LIBS})
 set(CANINE_SINGLE_LEG_SOURCES
         src/CAMEL-Quad-SingleLeg/SingleLeggedSimulation.cpp
         src/CAMEL-Quad-SingleLeg/SingleLeggedRobot.cpp
-        src/CAMEL-Quad-SingleLeg/SingleLeggedPDController.cpp)
+        src/CAMEL-Quad-SingleLeg/SingleLeggedPDController.cpp
+        src/CAMEL-Quad-SingleLeg/SingleLeggedIDController.cpp)
 
 add_executable(camel-canine_single_leg_simulation ${CAMEL_SOURCES} ${CAMEL_SIMULATION_UI_SOURCES} ${CANINE_SINGLE_LEG_SOURCES})
 target_link_libraries(camel-canine_single_leg_simulation ${CAMEL_LIBS})
