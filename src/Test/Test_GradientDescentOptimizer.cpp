@@ -8,7 +8,7 @@
 
 double objFunc_main(Eigen::VectorXd x)
 {
-    return (x[0] - 5.0)*(x[0] - 5.0);
+    return (x[0] - 5.0)*(x[0] - 5.0) + (x[1] - 3.0)*(x[1] - 3.0);
 }
 
 int main(){
@@ -16,7 +16,9 @@ int main(){
     double (*objFunc)(Eigen::VectorXd) = objFunc_main;
     GDOptimizer.setObjectiveFunction(objFunc);
 
-    Eigen::VectorXd y = Eigen::VectorXd(1);
-    y[0] = 5.0;
-    std::cout<<GDOptimizer.getFunctionValue(y)<<std::endl;
+    Eigen::VectorXd y = Eigen::VectorXd(2);
+    y << 0.0, 0.0;
+    GDOptimizer.setInitialState(y);
+    GDOptimizer.solve();
+    std::cout<<GDOptimizer.getState()<<std::endl;
 }
