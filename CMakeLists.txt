@@ -99,3 +99,5 @@ add_executable(camel-test_trajectory_generation src/Test/Test_trajectoryGenerato
 add_executable(camel-rmdx8test_torque src/Test/Test_RMDX8Pro.cpp)
 add_executable(camel-test_real_time_thread src/Test/Test_RealTimeThread.cpp ${CAMEL_SOURCES})
 target_link_libraries(camel-test_real_time_thread ${CAMEL_LIBS})
+add_executable(camel-test_gradient_descent_optimizer src/Test/Test_GradientDescentOptimizer.cpp ${CAMEL_SOURCES})
+target_link_libraries(camel-test_gradient_descent_optimizer ${CAMEL_LIBS})

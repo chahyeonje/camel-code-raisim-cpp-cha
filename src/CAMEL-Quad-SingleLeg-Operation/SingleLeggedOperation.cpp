@@ -9,7 +9,7 @@
 
 double deg2rad = 3.141592 / 180.0;
 double rad2deg = 180.0 / 3.141592;
-
+bool isrealTimePlot = false;
 void thread1task(bool *button1Pressed, bool *button2Pressed, bool *button3Pressed, bool *button4Pressed,
                  bool *button5Pressed, bool *button6Pressed) {
     std::string canName_temp = "can0";
@@ -32,8 +32,12 @@ void thread1task(bool *button1Pressed, bool *button2Pressed, bool *button3Presse
     std::cout << "test1" << std::endl;
     while (true) {
         usleep(1000);
-        singleLeg.visualize();
-
+        if(isrealTimePlot)
+        {
+            can.setTorque(motorHip, 0.0);
+            can.setTorque(motorKnee, 0.0);
+            singleLeg.visualize();
+        }
         if (*button1Pressed) {
             // CAN initialize
             if (can.getSock() < 0) {
@@ -57,10 +61,14 @@ void thread1task(bool *button1Pressed, bool *button2Pressed, bool *button3Presse
             // Motor On
             can.turnOnMotor(motorKnee);
             can.turnOnMotor(motorHip);
+            sleep(1);
             can.setTorque(motorHip, 0.0);
             can.setTorque(motorKnee, 0.0);
+            std::cout<<can.getAngularPosition2() /18.0 * 3.141592<<std::endl;
             singleLeg.visualize();
+            isrealTimePlot = true;
             *button3Pressed = false;
+
         }
 
         if (*button4Pressed) {

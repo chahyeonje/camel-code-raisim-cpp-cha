@@ -18,12 +18,14 @@ void SingleLeggedPDControllerOperation::doControl() {
 void SingleLeggedPDControllerOperation::zeroing() {
     updateState();
     setPDGain(50.0, 2.5);
-    mCubicTrajectoryGen1.updateTrajectory(position[1], 0.785398, 0.0, 1.0);
-    mCubicTrajectoryGen2.updateTrajectory(position[2], -1.570796, 0.0, 1.0);
-    for(int i =0; i<3000 ; i++)
+    double timeDuration = 3.0;
+    double dT = 0.001;
+    mCubicTrajectoryGen1.updateTrajectory(position[1], 0.785398, 0.0, timeDuration);
+    mCubicTrajectoryGen2.updateTrajectory(position[2], -1.570796, 0.0, timeDuration);
+    for(int i =0; i < int(timeDuration / dT) ; i++)
     {
-        desiredJointPosition << mCubicTrajectoryGen1.getPositionTrajectory(i*0.001), mCubicTrajectoryGen2.getPositionTrajectory(i*0.001);
-        desiredJointVelocity << mCubicTrajectoryGen1.getVelocityTrajectory(i*0.001), mCubicTrajectoryGen2.getVelocityTrajectory(i*0.001);
+        desiredJointPosition << mCubicTrajectoryGen1.getPositionTrajectory(i*dT), mCubicTrajectoryGen2.getPositionTrajectory(i*dT);
+        desiredJointVelocity << mCubicTrajectoryGen1.getVelocityTrajectory(i*dT), mCubicTrajectoryGen2.getVelocityTrajectory(i*dT);
         std::cout<<"current position : "<<position<<std::endl;
         std::cout<<"desired position : "<<desiredJointPosition[0] <<" "<<desiredJointPosition[1]<<std::endl;
         doControl();
