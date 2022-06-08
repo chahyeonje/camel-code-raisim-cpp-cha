@@ -4,33 +4,33 @@
 
 #ifndef RAISIM_SIMULATIONMAINWINDOW_H
 #define RAISIM_MAINWINDOW_H
-
 #include <QMainWindow>
 
+QT_BEGIN_NAMESPACE
+namespace Ui { class MainWindow; }
+QT_END_NAMESPACE
 
-namespace Ui {
-    class MainWindow;
-}
-
-class MainWindow : public QMainWindow {
+class MainWindow : public QMainWindow
+{
 Q_OBJECT
 
 public:
-    bool button1 = false;
-    bool button2 = false;
-    bool button3 = false;
-    bool button4 = false;
-    bool button5 = false;
-    bool button6 = false;
-    QVector<double> x;
-    QVector<double> y1;
-    QVector<double> y2;
-    explicit MainWindow(QWidget *parent = 0);
+    bool buttonCANInit = false;
+    bool buttonRaisimInit = false;
+    bool buttonMotorOn = false;
+    bool buttonMotorOff = false;
+    bool buttonStartControl = false;
+    bool buttonStopControl = false;
+    bool buttonGenerateCubicTrajectory = false;
+    bool buttonGenerateSinTrajectory = false;
+    bool buttonJump = false;
+    bool buttonZeroing = false;
+
+    MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-//    void setSimulation(SimulationThread simThread){this->thread = simThread;}
 
 private slots:
-    void on_pushButton_clicked();
+    void on_pushButton_1_clicked();
 
     void on_pushButton_2_clicked();
 
@@ -42,12 +42,16 @@ private slots:
 
     void on_pushButton_6_clicked();
 
-    void plotWidget1();
+    void on_pushButton_7_clicked();
 
-    void plotWidget2();
+    void on_pushButton_8_clicked();
+
+    void on_pushButton_9_clicked();
+
+    void on_pushButton_10_clicked();
+
 private:
     Ui::MainWindow *ui;
 };
-
 
 #endif //RAISIM_SIMULATIONMAINWINDOW_H

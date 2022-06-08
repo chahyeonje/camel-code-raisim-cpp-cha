@@ -4,101 +4,138 @@
 
 #include "SingleLeggedOperation.h"
 #include "mainwindow.h"
+#include "include/RT/rb_utils.h"
 #include <QApplication>
 #include <thread>
 
 double deg2rad = 3.141592 / 180.0;
 double rad2deg = 180.0 / 3.141592;
+pthread_t thread_operation;
 bool isrealTimePlot = false;
-void thread1task(bool *button1Pressed, bool *button2Pressed, bool *button3Pressed, bool *button4Pressed,
-                 bool *button5Pressed, bool *button6Pressed) {
-    std::string canName_temp = "can0";
-    std::string bitRate = "1000000";
-    char *canName = "can0";
-    SingleLegCAN can(canName, canName_temp, bitRate);
-    std::cout << "test0" << std::endl;
-    std::string urdfPath = "\\home\\jaehoon\\raisimLib\\camel-code-raisim-cpp\\rsc\\camel_single_leg\\camel_single_leg.urdf";
-    std::string name = "singleLeg";
-    raisim::World world;
-    SingleLeggedOperation realRobot = SingleLeggedOperation(&world, 250);
-    std::cout << "test1" << std::endl;
-    SingleLeggedRobotOperation singleLeg = SingleLeggedRobotOperation(&world, urdfPath, name, &can);
-    std::cout << "test1" << std::endl;
-    SingleLeggedPDControllerOperation PDcontroller = SingleLeggedPDControllerOperation(&singleLeg);
-    raisim::RaisimServer server(&world);
+bool *buttonCANInitPressed;
+bool *buttonRaisimInitPressed;
+bool *buttonMotorOnPressed;
+bool *buttonMotorOffPressed;
+bool *buttonStartControlPressed;
+bool *buttonStopControlPressed;
+bool *buttonGenCubicTrajPressed;
+bool *buttonGenSinTrajPressed;
+bool *buttonJumpPressed;
+bool *buttonZeroingPressed;
 
-    int motorKnee = 0x141;
-    int motorHip = 0x143;
-    std::cout << "test1" << std::endl;
-    while (true) {
-        usleep(1000);
-        if(isrealTimePlot)
-        {
-            can.setTorque(motorHip, 0.0);
-            can.setTorque(motorKnee, 0.0);
-            singleLeg.visualize();
+std::string canName_temp = "can0";
+std::string bitRate = "1000000";
+char *canName = "can0";
+SingleLegCAN can(canName, canName_temp, bitRate);
+int motorKnee = 0x141;
+int motorHip = 0x143;
+
+std::string urdfPath = "\\home\\jaehoon\\raisimLib\\camel-code-raisim-cpp\\rsc\\camel_single_leg\\camel_single_leg.urdf";
+std::string name = "singleLeg";
+raisim::World world;
+SingleLeggedOperation realRobot = SingleLeggedOperation(&world, 250);
+SingleLeggedRobotOperation singleLeg = SingleLeggedRobotOperation(&world, urdfPath, name, &can);
+SingleLeggedPDControllerOperation PDcontroller = SingleLeggedPDControllerOperation(&singleLeg);
+raisim::RaisimServer server(&world);
+void operationCode(){
+    singleLeg.visualize();
+
+    if(isrealTimePlot)
+    {
+        can.setTorque(motorHip, 0.0);
+        can.setTorque(motorKnee, 0.0);
+        singleLeg.visualize();
+    }
+    if (*buttonCANInitPressed) {
+        // CAN initialize
+        if (can.getSock() < 0) {
+            std::cout << "Failed to creat CAN" << std::endl;
+            return;
         }
-        if (*button1Pressed) {
-            // CAN initialize
-            if (can.getSock() < 0) {
-                std::cout << "Failed to creat CAN" << std::endl;
-                break;
-            }
-            std::cout << "Success to initialize CAN communication" << std::endl;
-            *button1Pressed = false;
-        }
+        std::cout << "Success to initialize CAN communication" << std::endl;
+        *buttonCANInitPressed = false;
+    }
 
-        if (*button2Pressed) {
-            // Raisim initialize
+    if (*buttonRaisimInitPressed) {
+        // Raisim initialize
+        server.launchServer(8080);
+        sleep(2);
+        *buttonRaisimInitPressed = false;
+        std::cout << "Success to initialize Raisim" << std::endl;
+    }
 
-            server.launchServer(8080);
-            sleep(3);
-            *button2Pressed = false;
-            std::cout << "Success to initialize Raisim" << std::endl;
-        }
+    if (*buttonMotorOnPressed) {
+        // Motor On
+        can.turnOnMotor(motorKnee);
+        can.turnOnMotor(motorHip);
+        sleep(1);
+        can.setTorque(motorHip, 0.0);
+        can.setTorque(motorKnee, 0.0);
+        singleLeg.visualize();
+        isrealTimePlot = true;
+        *buttonMotorOnPressed = false;
+    }
 
-        if (*button3Pressed) {
-            // Motor On
-            can.turnOnMotor(motorKnee);
-            can.turnOnMotor(motorHip);
-            sleep(1);
-            can.setTorque(motorHip, 0.0);
-            can.setTorque(motorKnee, 0.0);
-            std::cout<<can.getAngularPosition2() /18.0 * 3.141592<<std::endl;
-            singleLeg.visualize();
-            isrealTimePlot = true;
-            *button3Pressed = false;
+    if (*buttonMotorOffPressed) {
+        // Motor Off
+        can.turnOffMotor(motorKnee);
+        can.turnOffMotor(motorHip);
+        *buttonMotorOffPressed = false;
+    }
 
-        }
-
-        if (*button4Pressed) {
-            // Motor Off
-            can.turnOffMotor(motorKnee);
-            can.turnOffMotor(motorHip);
-            *button4Pressed = false;
-        }
-
-        if (*button5Pressed) {
+    if (*buttonStartControlPressed) {
 //             Start Control
-//            int iteration = 0;
-            PDcontroller.zeroing();
-            PDcontroller.setTrajectory();
-            PDcontroller.setPDGain(50.0, 2.5);
-            while (true) {
-//                iteration++;
-                PDcontroller.doControl();
-                singleLeg.visualize();
-                usleep(1000);
-                std::cout << "current position : " << PDcontroller.position << std::endl;
-                std::cout << "current velocity : " << PDcontroller.velocity << std::endl;
-            }
-            *button5Pressed = false;
-        }
+        PDcontroller.setTrajectory();
+        PDcontroller.doControl();
+        std::cout << "current position : " << PDcontroller.position << std::endl;
+        std::cout << "current velocity : " << PDcontroller.velocity << std::endl;
+    }
 
-        if (*button6Pressed) {
-//            // Generate new trajectory
-//            PDcontroller.setTrajectory(3.141592 * 1.0, 0.0);
-            *button6Pressed = false;
+    if (*buttonStopControlPressed) {
+        can.turnOffMotor(motorKnee);
+        can.turnOffMotor(motorHip);
+        *buttonZeroingPressed = false;
+        *buttonStartControlPressed = false;
+        *buttonStopControlPressed = false;
+    }
+
+    if (*buttonGenCubicTrajPressed){
+        *buttonGenCubicTrajPressed = false;
+    }
+
+    if (*buttonGenSinTrajPressed){
+        *buttonGenSinTrajPressed = false;
+    }
+
+    if (*buttonJumpPressed){
+        *buttonJumpPressed = false;
+    }
+
+    if (*buttonZeroingPressed){
+        PDcontroller.zeroing();
+        *buttonZeroingPressed = false;
+    }
+}
+
+void *rt_operation_thread(void *arg) {
+    std::cout << "entered #rt_time_checker_thread" << std::endl;
+    struct timespec TIME_NEXT;
+    struct timespec TIME_NOW;
+    const long PERIOD_US = long(0.005 * 1e6); // 200Hz 짜리 쓰레드
+
+    clock_gettime(CLOCK_REALTIME, &TIME_NEXT);
+    std::cout << "bf #while" << std::endl;
+    std::cout << "control freq : " << 1 / double(PERIOD_US) * 1e6 << std::endl;
+    while (true) {
+        clock_gettime(CLOCK_REALTIME, &TIME_NOW); //현재 시간 구함
+        timespec_add_us(&TIME_NEXT, PERIOD_US);   //목표 시간 구함
+
+        operationCode();
+
+        clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &TIME_NEXT, NULL); //목표시간까지 기다림 (현재시간이 이미 오바되어 있으면 바로 넘어갈 듯)
+        if (timespec_cmp(&TIME_NOW, &TIME_NEXT) > 0) {  // 현재시간이 목표시간 보다 오바되면 경고 띄우기
+            std::cout << "RT Deadline Miss, Time Checker thread : " << timediff_us(&TIME_NEXT, &TIME_NOW) * 0.001
+                      << " ms" << std::endl;
         }
     }
 }
@@ -106,7 +143,19 @@ void thread1task(bool *button1Pressed, bool *button2Pressed, bool *button3Presse
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
     MainWindow w;
-    std::thread thread1(thread1task, &w.button1, &w.button2, &w.button3, &w.button4, &w.button5, &w.button6);
+    buttonCANInitPressed = &w.buttonCANInit;
+    buttonRaisimInitPressed = &w.buttonRaisimInit;
+    buttonMotorOnPressed = &w.buttonMotorOn;
+    buttonMotorOffPressed = &w.buttonMotorOff;
+    buttonStartControlPressed = &w.buttonStartControl;
+    buttonStopControlPressed = &w.buttonStopControl;
+    buttonGenCubicTrajPressed = &w.buttonGenerateCubicTrajectory;
+    buttonGenSinTrajPressed = &w.buttonGenerateSinTrajectory;
+    buttonJumpPressed = &w.buttonJump;
+    buttonZeroingPressed = &w.buttonZeroing;
+
+    int thread_id_timeChecker = generate_rt_thread(thread_operation, rt_operation_thread, "operation_thread", 0, 99, NULL);
+
     w.show();
 
     return a.exec();

@@ -24,6 +24,8 @@ public:
     double PGain;
     double DGain;
 
+    double dT = 0.005;
+
     SingleLeggedPDControllerOperation(SingleLeggedRobotOperation *robot) {
         mRobot = robot;
         setTrajectory();
@@ -33,12 +35,14 @@ public:
 
     void doControl();
     void zeroing();
-    void updateTrajectory();
+    void updateCubicTrajectory(double currentTime, double currentPosition, double goalPosition);
+    void updateSinTrajectory(double currentTime, double currentPosition, double amplitude, double frequency);
     void setTrajectory();
     void updateState();
     void computeControlInput();
     void setControlInput();
     void setPDGain(double PGain, double DGain);
+    void IKsolve();
 
 private:
     SingleLeggedRobotOperation *mRobot;

@@ -17,6 +17,7 @@ public:
     Eigen::VectorXd positionError = Eigen::VectorXd(2);
     Eigen::VectorXd velocityError = Eigen::VectorXd(2);
     Eigen::VectorXd desiredJointPosition = Eigen::VectorXd(2);
+    Eigen::VectorXd desiredJointPosition_past = Eigen::VectorXd(2);
     Eigen::VectorXd desiredJointVelocity = Eigen::VectorXd(2);
 
     double desiredPosition;
@@ -30,6 +31,8 @@ public:
     double PGain;
     double DGain;
     double torqueLimit = 10.0;
+
+    double dT = 0.005;
 
     SingleLeggedIDController(Robot *robot) : Controller(robot) {
         updateState();
