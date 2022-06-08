@@ -5,6 +5,7 @@
 #include <iostream>
 #include "include/TrajectoryGenerator/CubicTrajectoryGenerator.h"
 #include "include/TrajectoryGenerator/QuinticTrajectoryGenerator.h"
+#include <random>
 
 void CubicTrajectoryTest(double currentPosition, double goalPosition, double currentTime, double timeDuration)
 {
@@ -52,11 +53,15 @@ void QuinticTrajectoryTest(double currentPosition, double goalPosition, double c
 int main() {
 //    CubicTrajectoryTest(0.0, 0.53, 0.0, 5.0);
 //    QuinticTrajectoryTest(0.0, 0.53, 0.0, 5.0);
-    double dT = 0.001;
-    double timeDuration = 3.0;
-    for(int i =0;i<int(timeDuration / dT); i++)
-    {
-        std::cout<<i<<std::endl;
-    }
+    double position = 0.23;
+    std::cout<<acos(position / 0.46)<<std::endl;
 
+
+
+
+    for (int i = 0; i < 100; i++)
+    {
+        randomGoalPosition = double(dis(gen)) / 100.0 * 0.15 + 0.23;
+        std::cout << "Ramdom Num : " << randomGoalPosition << std::endl;
+    }
 }

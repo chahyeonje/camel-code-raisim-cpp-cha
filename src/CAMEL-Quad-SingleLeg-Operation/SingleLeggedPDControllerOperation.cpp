@@ -11,39 +11,85 @@ void SingleLeggedPDControllerOperation::setPDGain(double PGain, double DGain) {
 
 void SingleLeggedPDControllerOperation::doControl() {
     updateState();
+    setTrajectory();
     computeControlInput();
     setControlInput();
 }
 
-void SingleLeggedPDControllerOperation::zeroing() {
-    updateState();
-    setPDGain(50.0, 2.5);
-    double timeDuration = 3.0;
-    mCubicTrajectoryGen1.updateTrajectory(position[1], 0.785398, 0.0, timeDuration);
-    mCubicTrajectoryGen2.updateTrajectory(position[2], -1.570796, 0.0, timeDuration);
-    for(int i =0; i < int(timeDuration / dT) ; i++)
+void SingleLeggedPDControllerOperation::setTrajectory() {
+    if(mIsZeroing)
     {
-        desiredJointPosition << mCubicTrajectoryGen1.getPositionTrajectory(i*dT), mCubicTrajectoryGen2.getPositionTrajectory(i*dT);
-        desiredJointVelocity << mCubicTrajectoryGen1.getVelocityTrajectory(i*dT), mCubicTrajectoryGen2.getVelocityTrajectory(i*dT);
-        std::cout<<"current position : "<<position<<std::endl;
-        std::cout<<"desired position : "<<desiredJointPosition[0] <<" "<<desiredJointPosition[1]<<std::endl;
-        doControl();
-        usleep(4500);
-        mRobot->visualize();
+        if(*mCurrentTime < mHaltTime)
+        {
+            desiredJointPosition << mCubicTrajectoryGen1.getPositionTrajectory(*mCurrentTime), mCubicTrajectoryGen2.getPositionTrajectory(*mCurrentTime);
+            desiredJointVelocity << mCubicTrajectoryGen1.getVelocityTrajectory(*mCurrentTime), mCubicTrajectoryGen2.getVelocityTrajectory(*mCurrentTime);
+            std::cout<<"halt time: "<<mHaltTime<<std::endl;
+        }
+        else
+        {
+            mIsZeroing = false;
+            setPointTrajectoryZeroing();
+        }
+    }
+    else if(mIsCubic)
+    {
+        if(*mCurrentTime < mHaltTime)
+        {
+            desiredPosition = mCubicTrajectoryGen.getPositionTrajectory(*mCurrentTime);
+            IKsolve();
+            std::cout<<mHaltTime<<std::endl;
+            std::cout<<"current time: "<<*mCurrentTime<<std::endl;
+        }
+        else
+        {
+            mIsCubic = false;
+            setPointTrajectory(position[0]);
+        }
+    }
+    else if(mIsSin)
+    {
+
     }
 }
 
-void SingleLeggedPDControllerOperation::updateCubicTrajectory(double currentTime, double currentPosition, double goalPosition) {
-
+void SingleLeggedPDControllerOperation::setPointTrajectory(double goalPosition){
+    desiredPosition = goalPosition;
+    desiredJointPosition[0] = acos(desiredPosition / 0.46);
+    desiredJointPosition[1] = -2*desiredJointPosition[0];
+    desiredJointPosition_past = desiredJointPosition;
+    desiredJointVelocity.setZero();
 }
 
-void SingleLeggedPDControllerOperation::updateSinTrajectory(double currentTime, double currentPosition, double amplitude, double frequency) {
-
+void SingleLeggedPDControllerOperation::zeroing() {
+    mIsZeroing = true;
+    mIsCubic = false;
+    mIsSin = false;
+    updateState();
+    double timeDuration = 3.0;
+    mCubicTrajectoryGen1.updateTrajectory(position[1], 0.785398, *mCurrentTime, timeDuration);
+    mCubicTrajectoryGen2.updateTrajectory(position[2], -1.570796, *mCurrentTime, timeDuration);
+    mHaltTime = *mCurrentTime + timeDuration;
 }
 
-void SingleLeggedPDControllerOperation::setTrajectory() {
+void SingleLeggedPDControllerOperation::setPointTrajectoryZeroing() {
     desiredJointPosition << 0.785398, -1.570796;
     desiredJointVelocity << 0.0, 0.0;
+    desiredPosition = 0.325269119;
+    desiredVelocity = 0.0;
+}
+
+void SingleLeggedPDControllerOperation::updateCubicTrajectory(double goalPosition, double timeDuration) {
+    mIsZeroing = false;
+    mIsCubic = true;
+    mIsSin = false;
+    mCubicTrajectoryGen.updateTrajectory(desiredPosition, goalPosition, *mCurrentTime, timeDuration);
+    mHaltTime = *mCurrentTime + timeDuration;
+}
+
+void SingleLeggedPDControllerOperation::updateSinTrajectory(double amplitude, double frequency, double timeDuration) {
+    mIsZeroing = false;
+    mIsCubic = false;
+    mIsSin = true;
 }
 
 void SingleLeggedPDControllerOperation::updateState() {
@@ -53,21 +99,30 @@ void SingleLeggedPDControllerOperation::updateState() {
 
 void SingleLeggedPDControllerOperation::computeControlInput() {
     for (int i = 1; i < 3; i++) {
-        positionError[i - 1] = desiredJointPosition[i - 1] - position[i];
-        velocityError[i - 1] = desiredJointVelocity[i - 1] - velocity[i];
-        torque[i-1] = PGain * positionError[i - 1] + DGain * velocityError[i - 1];
-        if(torque[i-1] > mTorqueLimit){torque[i-1] = mTorqueLimit ;}
-        else if(torque[i-1] < -mTorqueLimit){torque[i-1] = -mTorqueLimit ;}
+        jointPositionError[i - 1] = desiredJointPosition[i - 1] - position[i];
+        jointVelocityError[i - 1] = desiredJointVelocity[i - 1] - velocity[i];
+        torque[i-1] = PGain * jointPositionError[i - 1] + DGain * jointVelocityError[i - 1];
     }
 }
 
 void SingleLeggedPDControllerOperation::setControlInput() {
-    std::cout<<"input torque: "<<torque<<std::endl;
+    std::cout<<"input torque: "<<torque[0]<<" "<<torque[1]<<std::endl;
+    for (int i = 0; i < 2; i++) {
+        if(torque[i] > mTorqueLimit)
+        {
+            torque[i] = mTorqueLimit;
+        }
+        else if(torque[i] < -mTorqueLimit)
+        {
+            torque[i] = -mTorqueLimit;
+        }
+    }
     mRobot->setTorque(torque);
 }
 
 void SingleLeggedPDControllerOperation::IKsolve() {
+    desiredJointPosition_past = desiredJointPosition;
     desiredJointPosition[0] = acos(desiredPosition / 0.46);
     desiredJointPosition[1] = -2*desiredJointPosition[0];
-
+    desiredJointVelocity = (desiredJointPosition - desiredJointPosition_past) / dT;
 }

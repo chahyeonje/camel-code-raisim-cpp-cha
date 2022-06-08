@@ -7,9 +7,11 @@
 #include "include/RT/rb_utils.h"
 #include <QApplication>
 #include <thread>
+#include <random>
 
 double deg2rad = 3.141592 / 180.0;
 double rad2deg = 180.0 / 3.141592;
+double currentTime = 0.0;
 pthread_t thread_operation;
 bool isrealTimePlot = false;
 bool *buttonCANInitPressed;
@@ -35,15 +37,21 @@ std::string name = "singleLeg";
 raisim::World world;
 SingleLeggedOperation realRobot = SingleLeggedOperation(&world, 250);
 SingleLeggedRobotOperation singleLeg = SingleLeggedRobotOperation(&world, urdfPath, name, &can);
-SingleLeggedPDControllerOperation PDcontroller = SingleLeggedPDControllerOperation(&singleLeg);
+SingleLeggedPDControllerOperation PDcontroller = SingleLeggedPDControllerOperation(&singleLeg, &currentTime);
 raisim::RaisimServer server(&world);
+
+std::random_device rd;
+std::mt19937 gen(rd());
+std::uniform_int_distribution<int> dis(0, 99);
+double randomGoalPosition;
+
 void operationCode(){
     singleLeg.visualize();
 
     if(isrealTimePlot)
     {
-        can.setTorque(motorHip, 0.0);
-        can.setTorque(motorKnee, 0.0);
+        can.readEncoder(motorHip);
+        can.readEncoder(motorKnee);
         singleLeg.visualize();
     }
     if (*buttonCANInitPressed) {
@@ -59,7 +67,6 @@ void operationCode(){
     if (*buttonRaisimInitPressed) {
         // Raisim initialize
         server.launchServer(8080);
-        sleep(2);
         *buttonRaisimInitPressed = false;
         std::cout << "Success to initialize Raisim" << std::endl;
     }
@@ -68,7 +75,6 @@ void operationCode(){
         // Motor On
         can.turnOnMotor(motorKnee);
         can.turnOnMotor(motorHip);
-        sleep(1);
         can.setTorque(motorHip, 0.0);
         can.setTorque(motorKnee, 0.0);
         singleLeg.visualize();
@@ -85,10 +91,13 @@ void operationCode(){
 
     if (*buttonStartControlPressed) {
 //             Start Control
-        PDcontroller.setTrajectory();
         PDcontroller.doControl();
-        std::cout << "current position : " << PDcontroller.position << std::endl;
-        std::cout << "current velocity : " << PDcontroller.velocity << std::endl;
+        std::cout<<"===================================================="<<std::endl;
+        std::cout<<"current time: "<<currentTime<<std::endl;
+        std::cout<<"current position : "<<PDcontroller.position[1]<<" "<<PDcontroller.position[2]<<std::endl;
+        std::cout<<"desired position : "<<PDcontroller.desiredJointPosition[0] <<" "<<PDcontroller.desiredJointPosition[1]<<std::endl;
+        std::cout<<"current velocity : "<<PDcontroller.velocity[1]<<" "<<PDcontroller.velocity[2]<<std::endl;
+        std::cout<<"desired velocity : "<<PDcontroller.desiredJointVelocity[0] <<" "<<PDcontroller.desiredJointVelocity[1]<<std::endl;
     }
 
     if (*buttonStopControlPressed) {
@@ -100,6 +109,8 @@ void operationCode(){
     }
 
     if (*buttonGenCubicTrajPressed){
+        randomGoalPosition = double(dis(gen)) / 100.0 * 0.15 + 0.23;
+        PDcontroller.updateCubicTrajectory(randomGoalPosition, 2.0);
         *buttonGenCubicTrajPressed = false;
     }
 
@@ -112,7 +123,9 @@ void operationCode(){
     }
 
     if (*buttonZeroingPressed){
+        std::cout << "zeroing start" << std::endl;
         PDcontroller.zeroing();
+        *buttonStartControlPressed = true;
         *buttonZeroingPressed = false;
     }
 }
@@ -129,6 +142,7 @@ void *rt_operation_thread(void *arg) {
     while (true) {
         clock_gettime(CLOCK_REALTIME, &TIME_NOW); //현재 시간 구함
         timespec_add_us(&TIME_NEXT, PERIOD_US);   //목표 시간 구함
+        currentTime += 0.005;
 
         operationCode();
 

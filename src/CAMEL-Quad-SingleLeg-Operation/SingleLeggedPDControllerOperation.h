@@ -13,31 +13,36 @@ public:
     Eigen::VectorXd torque = Eigen::VectorXd(2);
     raisim::VecDyn position = raisim::VecDyn(3);
     raisim::VecDyn velocity = raisim::VecDyn(3);
-    Eigen::VectorXd positionError = Eigen::VectorXd(2);
-    Eigen::VectorXd velocityError = Eigen::VectorXd(2);
+    Eigen::VectorXd jointPositionError = Eigen::VectorXd(2);
+    Eigen::VectorXd jointVelocityError = Eigen::VectorXd(2);
     Eigen::VectorXd desiredJointPosition = Eigen::VectorXd(2);
+    Eigen::VectorXd desiredJointPosition_past = Eigen::VectorXd(2);
     Eigen::VectorXd desiredJointVelocity = Eigen::VectorXd(2);
 
     double desiredPosition = 0.0;
     double desiredVelocity = 0.0;
+    double positionError = 0.0;
+    double velocityError = 0.0;
 
     double PGain;
     double DGain;
 
     double dT = 0.005;
 
-    SingleLeggedPDControllerOperation(SingleLeggedRobotOperation *robot) {
+    SingleLeggedPDControllerOperation(SingleLeggedRobotOperation *robot, double *currentTime) {
         mRobot = robot;
-        setTrajectory();
-        setPDGain(50.0, 2.5);
+        setPDGain(70.0, 1.5);
         torque[0] = 0.0;
+        mCurrentTime = currentTime;
     }
 
     void doControl();
-    void zeroing();
-    void updateCubicTrajectory(double currentTime, double currentPosition, double goalPosition);
-    void updateSinTrajectory(double currentTime, double currentPosition, double amplitude, double frequency);
     void setTrajectory();
+    void setPointTrajectory(double goalPosition);
+    void zeroing();
+    void updateCubicTrajectory(double goalPosition, double timeDuration);
+    void updateSinTrajectory(double amplitude, double frequency, double timeDuration);
+    void setPointTrajectoryZeroing();
     void updateState();
     void computeControlInput();
     void setControlInput();
@@ -46,9 +51,15 @@ public:
 
 private:
     SingleLeggedRobotOperation *mRobot;
+    CubicTrajectoryGenerator mCubicTrajectoryGen;
     CubicTrajectoryGenerator mCubicTrajectoryGen1;
     CubicTrajectoryGenerator mCubicTrajectoryGen2;
+    bool mIsZeroing = false;
+    bool mIsCubic = false;
+    bool mIsSin = false;
     double mTorqueLimit = 10.0;
+    double mHaltTime = 0.0;
+    double *mCurrentTime;
 };
 
 
