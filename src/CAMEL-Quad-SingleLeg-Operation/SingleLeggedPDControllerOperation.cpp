@@ -43,7 +43,7 @@ void SingleLeggedPDControllerOperation::setTrajectory() {
         else
         {
             mIsCubic = false;
-            setPointTrajectory(position[0]);
+            setPointTrajectory(desiredPosition);
         }
     }
     else if(mIsSin)

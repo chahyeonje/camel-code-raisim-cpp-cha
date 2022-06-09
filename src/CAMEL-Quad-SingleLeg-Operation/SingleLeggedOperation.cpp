@@ -5,7 +5,7 @@
 #include "SingleLeggedOperation.h"
 #include "mainwindow.h"
 #include "include/RT/rb_utils.h"
-#include "
+#include "include/Sensor/LoadCell.h"
 #include <QApplication>
 #include <thread>
 #include <random>
@@ -14,6 +14,8 @@ double deg2rad = 3.141592 / 180.0;
 double rad2deg = 180.0 / 3.141592;
 double currentTime = 0.0;
 pthread_t thread_operation;
+pthread_t thread_loadcell;
+
 bool isrealTimePlot = false;
 bool *buttonCANInitPressed;
 bool *buttonRaisimInitPressed;
@@ -33,6 +35,9 @@ SingleLegCAN can(canName, canName_temp, bitRate);
 int motorKnee = 0x141;
 int motorHip = 0x143;
 double intr = 1.0;
+
+LoadCell sensorLoadcell;
+double sensoredForce = 0.0;
 
 std::string urdfPath = "\\home\\jaehoon\\raisimLib\\camel-code-raisim-cpp\\rsc\\camel_single_leg\\camel_single_leg.urdf";
 std::string name = "singleLeg";
@@ -147,15 +152,24 @@ void *rt_operation_thread(void *arg) {
     while (true) {
         clock_gettime(CLOCK_REALTIME, &TIME_NOW); //현재 시간 구함
         timespec_add_us(&TIME_NEXT, PERIOD_US);   //목표 시간 구함
-        currentTime += 0.005;
 
+        currentTime += 0.005;
         operationCode();
 
         clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &TIME_NEXT, NULL); //목표시간까지 기다림 (현재시간이 이미 오바되어 있으면 바로 넘어갈 듯)
         if (timespec_cmp(&TIME_NOW, &TIME_NEXT) > 0) {  // 현재시간이 목표시간 보다 오바되면 경고 띄우기
-            std::cout << "RT Deadline Miss, Time Checker thread : " << timediff_us(&TIME_NEXT, &TIME_NOW) * 0.001
+            std::cout << "RT Deadline Miss, Operation thread : " << timediff_us(&TIME_NEXT, &TIME_NOW) * 0.001
                       << " ms" << std::endl;
         }
+    }
+}
+
+void *rt_loadcell_thread(void *arg){
+    while(true)
+    {
+        sensorLoadcell.readData();
+        sensoredForce = sensorLoadcell.getSensoredForce();
+//        std::cout<<"Sensored force[N] : "<<sensoredForce<<std::endl;
     }
 }
 
@@ -173,8 +187,8 @@ int main(int argc, char *argv[]) {
     buttonJumpPressed = &w.buttonJump;
     buttonZeroingPressed = &w.buttonZeroing;
 
-    int thread_id_timeChecker = generate_rt_thread(thread_operation, rt_operation_thread, "operation_thread", 0, 99, NULL);
-
+    int thread_id_operation = generate_rt_thread(thread_operation, rt_operation_thread, "operation_thread", 0, 99, NULL);
+    int thread_id_sensorLoadcell = generate_rt_thread(thread_loadcell, rt_loadcell_thread, "sensor_loadcell_thread", 1, 98, NULL);
     w.show();
 
     return a.exec();
