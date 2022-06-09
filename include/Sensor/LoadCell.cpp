@@ -37,9 +37,9 @@ void LoadCell::readData() {
     mIsNegativeValue = false;
 }
 
-void LoadCell::autoCalibration() {
+void LoadCell::nulling() {
     // it takes 2 seconds.
-    std::cout << "auto calibration is now running." << std::endl;
+    std::cout << "Nulling Loadcell." << std::endl;
     double tempSumedForce = 0;
     double tempSumedWeight = 0;
     double tempBiasForce = 0;

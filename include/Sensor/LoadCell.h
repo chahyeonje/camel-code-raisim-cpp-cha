@@ -67,11 +67,11 @@ public:
         std::cout << "Success to initialize USB serial COM communication for LoadCell." << std::endl;
 
         flushData(10);
-        autoCalibration();
+        nulling();
     }
 
     void readData();
-    void autoCalibration();
+    void nulling();
     void flushData(int num);
 
     int getRawData() { return mReadedData; }

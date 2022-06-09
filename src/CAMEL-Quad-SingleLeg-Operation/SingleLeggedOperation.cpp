@@ -5,6 +5,7 @@
 #include "SingleLeggedOperation.h"
 #include "mainwindow.h"
 #include "include/RT/rb_utils.h"
+#include "
 #include <QApplication>
 #include <thread>
 #include <random>
@@ -31,13 +32,14 @@ char *canName = "can0";
 SingleLegCAN can(canName, canName_temp, bitRate);
 int motorKnee = 0x141;
 int motorHip = 0x143;
+double intr = 1.0;
 
 std::string urdfPath = "\\home\\jaehoon\\raisimLib\\camel-code-raisim-cpp\\rsc\\camel_single_leg\\camel_single_leg.urdf";
 std::string name = "singleLeg";
 raisim::World world;
 SingleLeggedOperation realRobot = SingleLeggedOperation(&world, 250);
 SingleLeggedRobotOperation singleLeg = SingleLeggedRobotOperation(&world, urdfPath, name, &can);
-SingleLeggedPDControllerOperation PDcontroller = SingleLeggedPDControllerOperation(&singleLeg, &currentTime);
+SingleLeggedPDControllerOperation controller = SingleLeggedPDControllerOperation(&singleLeg, &currentTime);
 raisim::RaisimServer server(&world);
 
 std::random_device rd;
@@ -91,13 +93,13 @@ void operationCode(){
 
     if (*buttonStartControlPressed) {
 //             Start Control
-        PDcontroller.doControl();
+        controller.doControl();
         std::cout<<"===================================================="<<std::endl;
         std::cout<<"current time: "<<currentTime<<std::endl;
-        std::cout<<"current position : "<<PDcontroller.position[1]<<" "<<PDcontroller.position[2]<<std::endl;
-        std::cout<<"desired position : "<<PDcontroller.desiredJointPosition[0] <<" "<<PDcontroller.desiredJointPosition[1]<<std::endl;
-        std::cout<<"current velocity : "<<PDcontroller.velocity[1]<<" "<<PDcontroller.velocity[2]<<std::endl;
-        std::cout<<"desired velocity : "<<PDcontroller.desiredJointVelocity[0] <<" "<<PDcontroller.desiredJointVelocity[1]<<std::endl;
+        std::cout<<"current position : "<<controller.position[1]<<" "<<controller.position[2]<<std::endl;
+        std::cout<<"desired position : "<<controller.desiredJointPosition[0] <<" "<<controller.desiredJointPosition[1]<<std::endl;
+        std::cout<<"current velocity : "<<controller.velocity[1]<<" "<<controller.velocity[2]<<std::endl;
+        std::cout<<"desired velocity : "<<controller.desiredJointVelocity[0] <<" "<<controller.desiredJointVelocity[1]<<std::endl;
     }
 
     if (*buttonStopControlPressed) {
@@ -110,7 +112,10 @@ void operationCode(){
 
     if (*buttonGenCubicTrajPressed){
         randomGoalPosition = double(dis(gen)) / 100.0 * 0.15 + 0.23;
-        PDcontroller.updateCubicTrajectory(randomGoalPosition, 2.0);
+        intr = -intr;
+        double goalPos = 0.30 + 0.06 * intr;
+//        controller.updateCubicTrajectory(randomGoalPosition, 2.0);
+        controller.updateCubicTrajectory(goalPos, 2.0);
         *buttonGenCubicTrajPressed = false;
     }
 
@@ -124,7 +129,7 @@ void operationCode(){
 
     if (*buttonZeroingPressed){
         std::cout << "zeroing start" << std::endl;
-        PDcontroller.zeroing();
+        controller.zeroing();
         *buttonStartControlPressed = true;
         *buttonZeroingPressed = false;
     }

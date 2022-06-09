@@ -101,3 +101,6 @@ add_executable(camel-test_real_time_thread src/Test/Test_RealTimeThread.cpp ${CA
 target_link_libraries(camel-test_real_time_thread ${CAMEL_LIBS})
 add_executable(camel-test_gradient_descent_optimizer src/Test/Test_GradientDescentOptimizer.cpp ${CAMEL_SOURCES})
 target_link_libraries(camel-test_gradient_descent_optimizer ${CAMEL_LIBS})
+
+add_executable(camel-test_sensor_loadcell src/Test/Test_SensorLoadCell.cpp ${CAMEL_SOURCES})
+target_link_libraries(camel-test_sensor_loadcell ${CAMEL_LIBS})
