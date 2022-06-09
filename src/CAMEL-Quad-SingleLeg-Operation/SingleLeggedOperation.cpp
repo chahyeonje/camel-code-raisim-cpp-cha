@@ -13,6 +13,7 @@
 double deg2rad = 3.141592 / 180.0;
 double rad2deg = 180.0 / 3.141592;
 double currentTime = 0.0;
+double dT = 0.005;
 pthread_t thread_operation;
 pthread_t thread_loadcell;
 
@@ -43,8 +44,9 @@ std::string urdfPath = "\\home\\jaehoon\\raisimLib\\camel-code-raisim-cpp\\rsc\\
 std::string name = "singleLeg";
 raisim::World world;
 SingleLeggedOperation realRobot = SingleLeggedOperation(&world, 250);
-SingleLeggedRobotOperation singleLeg = SingleLeggedRobotOperation(&world, urdfPath, name, &can);
-SingleLeggedPDControllerOperation controller = SingleLeggedPDControllerOperation(&singleLeg, &currentTime);
+SingleLeggedRobotOperation singleLeg = SingleLeggedRobotOperation(&world, urdfPath, name, &can, dT);
+//SingleLeggedPDControllerOperation controller = SingleLeggedPDControllerOperation(&singleLeg, &currentTime, dT);
+SingleLeggedIDControllerOperation controller = SingleLeggedIDControllerOperation(&singleLeg, &currentTime, dT);
 raisim::RaisimServer server(&world);
 
 std::random_device rd;
@@ -98,13 +100,20 @@ void operationCode(){
 
     if (*buttonStartControlPressed) {
 //             Start Control
-        controller.doControl();
         std::cout<<"===================================================="<<std::endl;
+        controller.doControl();
         std::cout<<"current time: "<<currentTime<<std::endl;
-        std::cout<<"current position : "<<controller.position[1]<<" "<<controller.position[2]<<std::endl;
-        std::cout<<"desired position : "<<controller.desiredJointPosition[0] <<" "<<controller.desiredJointPosition[1]<<std::endl;
-        std::cout<<"current velocity : "<<controller.velocity[1]<<" "<<controller.velocity[2]<<std::endl;
-        std::cout<<"desired velocity : "<<controller.desiredJointVelocity[0] <<" "<<controller.desiredJointVelocity[1]<<std::endl;
+////        For PD controller
+//        std::cout<<"current position : "<<controller.position[1]<<" "<<controller.position[2]<<std::endl;
+//        std::cout<<"desired position : "<<controller.desiredJointPosition[0] <<" "<<controller.desiredJointPosition[1]<<std::endl;
+//        std::cout<<"current velocity : "<<controller.velocity[1]<<" "<<controller.velocity[2]<<std::endl;
+//        std::cout<<"desired velocity : "<<controller.desiredJointVelocity[0] <<" "<<controller.desiredJointVelocity[1]<<std::endl;
+
+////        For ID controller
+//        std::cout<<"current position : "<<controller.position[0]<<std::endl;
+//        std::cout<<"desired position : "<<controller.desiredPosition <<std::endl;
+//        std::cout<<"current position : "<<controller.velocity[0]<<std::endl;
+//        std::cout<<"desired velocity : "<<controller.desiredVelocity <<std::endl;
     }
 
     if (*buttonStopControlPressed) {
@@ -144,7 +153,7 @@ void *rt_operation_thread(void *arg) {
     std::cout << "entered #rt_time_checker_thread" << std::endl;
     struct timespec TIME_NEXT;
     struct timespec TIME_NOW;
-    const long PERIOD_US = long(0.005 * 1e6); // 200Hz 짜리 쓰레드
+    const long PERIOD_US = long(dT * 1e6); // 200Hz 짜리 쓰레드
 
     clock_gettime(CLOCK_REALTIME, &TIME_NEXT);
     std::cout << "bf #while" << std::endl;
@@ -153,7 +162,7 @@ void *rt_operation_thread(void *arg) {
         clock_gettime(CLOCK_REALTIME, &TIME_NOW); //현재 시간 구함
         timespec_add_us(&TIME_NEXT, PERIOD_US);   //목표 시간 구함
 
-        currentTime += 0.005;
+        currentTime += dT;
         operationCode();
 
         clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &TIME_NEXT, NULL); //목표시간까지 기다림 (현재시간이 이미 오바되어 있으면 바로 넘어갈 듯)

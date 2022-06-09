@@ -10,9 +10,10 @@
 
 class SingleLeggedRobotOperation : public Robot {
 public:
-    SingleLeggedRobotOperation(raisim::World *world, std::string urdfPath, std::string name, SingleLegCAN *can) : Robot(
+    SingleLeggedRobotOperation(raisim::World *world, std::string urdfPath, std::string name, SingleLegCAN *can, double dT) : Robot(
             world, urdfPath, name) {
         mCan = can;
+        mDT = dT;
         initialize();
     }
 
@@ -27,11 +28,13 @@ public:
 private:
     SingleLegCAN *mCan;
     Eigen::VectorXd mJointPosition = Eigen::VectorXd(3);
+    Eigen::VectorXd mJointPosition_past = Eigen::VectorXd(3);
     Eigen::VectorXd mJointVelocity = Eigen::VectorXd(3);
 
     double mHipOffset = 50.0 * 3.141592 / 180.0; //
     double mKneeOffset = -3.302511324; //
     double mLumpedMass = 2.660;
+    double mDT;
     int mMotorKneeID = 0x141;
     int mMotorHipID = 0x143;
 };

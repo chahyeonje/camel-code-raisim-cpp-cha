@@ -124,5 +124,5 @@ void SingleLeggedPDControllerOperation::IKsolve() {
     desiredJointPosition_past = desiredJointPosition;
     desiredJointPosition[0] = acos(desiredPosition / 0.46);
     desiredJointPosition[1] = -2*desiredJointPosition[0];
-    desiredJointVelocity = (desiredJointPosition - desiredJointPosition_past) / dT;
+    desiredJointVelocity = (desiredJointPosition - desiredJointPosition_past) / mDT;
 }

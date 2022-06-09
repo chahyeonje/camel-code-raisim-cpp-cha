@@ -11,7 +11,7 @@
 class SingleLeggedIDController : public Controller {
 public:
     Eigen::VectorXd torque = Eigen::VectorXd(3);
-    double calculatedForce = 0.0;
+
     raisim::VecDyn position = raisim::VecDyn(3);
     raisim::VecDyn velocity = raisim::VecDyn(3);
     Eigen::VectorXd positionError = Eigen::VectorXd(2);
@@ -23,6 +23,7 @@ public:
     double desiredPosition;
     double desiredVelocity;
     double desiredAcceleration;
+    double calculatedForce = 0.0;
 
     // jacobian
     double dz_dth1 = 0.0;
@@ -32,13 +33,14 @@ public:
     double DGain;
     double torqueLimit = 10.0;
 
-    double dT = 0.005;
 
-    SingleLeggedIDController(Robot *robot) : Controller(robot) {
+
+    SingleLeggedIDController(Robot *robot, double dT) : Controller(robot) {
         updateState();
         mTrajectoryGenerator.updateTrajectory(position[0], 0.35, getRobot()->getWorldTime(), 1.0);
         setPDGain(200.0, 25.0);
         torque[0] = 0.0;
+        mDT = dT;
     }
 
     void doControl() override;
@@ -53,6 +55,7 @@ private:
     QuinticTrajectoryGenerator mTrajectoryGenerator;
     double mLumpedMass = 2.009;
     double mGravity = -9.81;
+    double mDT;
 };
 
 #endif //RAISIM_SINGLELEGGEDIDCONTROLLER_H

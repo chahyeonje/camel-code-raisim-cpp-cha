@@ -8,6 +8,7 @@
 #include "include/CAMEL/Operation.h"
 #include "SingleLeggedRobotOperation.h"
 #include "SingleLeggedPDControllerOperation.h"
+#include "SingleLeggedIDControllerOperation.h"
 
 class SingleLeggedOperation : public Operation {
 public:

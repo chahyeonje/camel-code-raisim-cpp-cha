@@ -12,7 +12,7 @@ void SingleLeggedIDController::setPDGain(double PGain, double DGain) {
 void SingleLeggedIDController::doControl() {
     updateState();
     setTrajectory();
-    IKsolve();
+//    IKsolve();
     computeControlInput();
     setControlInput();
 }
@@ -54,5 +54,5 @@ void SingleLeggedIDController::IKsolve() {
     desiredJointPosition_past = desiredJointPosition;
     desiredJointPosition[0] = acos(desiredPosition / 0.46);
     desiredJointPosition[1] = -2*desiredJointPosition[0];
-    desiredJointVelocity = (desiredJointPosition - desiredJointPosition_past) / dT;
+    desiredJointVelocity = (desiredJointPosition - desiredJointPosition_past) / mDT;
 }

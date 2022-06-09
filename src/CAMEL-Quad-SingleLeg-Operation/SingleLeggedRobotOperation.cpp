@@ -21,14 +21,15 @@ void SingleLeggedRobotOperation::visualize() {
 }
 
 Eigen::VectorXd SingleLeggedRobotOperation::getQ() {
-    mJointPosition[0] = 0.23 * cos(mJointPosition[1]) + 0.23 * cos(mJointPosition[1] + mJointPosition[2]);
+    mJointPosition_past = mJointPosition;
     mJointPosition[1] = mCan->getAngularPosition2() + mHipOffset;
     mJointPosition[2] = mCan->getAngularPosition1() + mKneeOffset;
+    mJointPosition[0] = 0.23 * cos(mJointPosition[1]) + 0.23 * cos(mJointPosition[1] + mJointPosition[2]);
     return mJointPosition;
 }
 
 Eigen::VectorXd SingleLeggedRobotOperation::getQD() {
-    mJointVelocity[0] = 0.0;
+    mJointVelocity[0] = (mJointPosition[0] - mJointPosition_past[0]) / mDT;
     mJointVelocity[1] = mCan->getAngularVelocity2();
     mJointVelocity[2] = mCan->getAngularVelocity1();
     return mJointVelocity;

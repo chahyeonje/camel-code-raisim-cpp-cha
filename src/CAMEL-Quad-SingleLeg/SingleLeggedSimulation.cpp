@@ -21,7 +21,7 @@ SingleLeggedSimulation sim = SingleLeggedSimulation(&world, dT);
 SingleLeggedRobot robot = SingleLeggedRobot(&world, urdfPath, name);
 
 //SingleLeggedPDController controller = SingleLeggedPDController(&robot);
-SingleLeggedIDController controller = SingleLeggedIDController(&robot);
+SingleLeggedIDController controller = SingleLeggedIDController(&robot, dT);
 double oneCycleSimTime = 0;
 int divider = ceil(simulationDuration / dT / 200);
 int iteration = 0;
