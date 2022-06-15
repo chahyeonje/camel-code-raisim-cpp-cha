@@ -6,7 +6,6 @@
 #define RAISIM_SIMPLEPENDULUMPDCONTROLLER_H
 
 #include "include/CAMEL/Controller.h"
-#include "include/TrajectoryGenerator/QuinticTrajectoryGenerator.h"
 
 class SingleLeggedPDController : public Controller {
 public:
@@ -26,8 +25,8 @@ public:
     double torqueLimit = 13.0;
 
     SingleLeggedPDController(Robot *robot) : Controller(robot) {
-        mTrajectoryGenerator.updateTrajectory(position[0], 0.35, getRobot()->getWorldTime(), 1.0);
-        setPDGain(50.0, 1.5);
+        setTrajectory();
+        setPDGain(200.0, 25.0);
         torque[0] = 0.0;
     }
 
@@ -40,7 +39,6 @@ public:
     void IKsolve();
 
 private:
-    QuinticTrajectoryGenerator mTrajectoryGenerator;
 };
 
 

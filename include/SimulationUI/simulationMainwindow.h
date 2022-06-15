@@ -23,16 +23,16 @@ public:
     double data_x[201];
     double data_y1[201];
     double data_y1_desired[201];
-    double data_widget1_min = 0;
-    double data_widget1_max = 0;
+    double data_widget1_min = -0.01;
+    double data_widget1_max = 0.01;
     double data_y2[201];
     double data_y2_desired[201];
-    double data_widget2_min = 0;
-    double data_widget2_max = 0;
+    double data_widget2_min = -0.01;
+    double data_widget2_max = 0.01;
     double data_y3_red[201];
     double data_y3_blue[201];
-    double data_widget3_min = 0;
-    double data_widget3_max = 0;
+    double data_widget3_min = -0.01;
+    double data_widget3_max = 0.01;
 
 public slots:
     void plotWidget1();

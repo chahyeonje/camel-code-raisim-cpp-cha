@@ -53,10 +53,12 @@ std::random_device rd;
 std::mt19937 gen(rd());
 std::uniform_int_distribution<int> dis(0, 99);
 double randomGoalPosition;
+Eigen::MatrixXd collectedData(7,1000);
+
 
 void operationCode(){
     singleLeg.visualize();
-
+    collectedData(0) =
     if(isrealTimePlot)
     {
         can.readEncoder(motorHip);

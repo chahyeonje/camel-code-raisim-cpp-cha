@@ -11,15 +11,14 @@ void SingleLeggedPDController::setPDGain(double PGain, double DGain) {
 
 void SingleLeggedPDController::doControl() {
     updateState();
-    setTrajectory();
     IKsolve();
     computeControlInput();
     setControlInput();
 }
 
 void SingleLeggedPDController::setTrajectory() {
-    desiredPosition = mTrajectoryGenerator.getPositionTrajectory(getRobot()->getWorldTime());
-    desiredVelocity = mTrajectoryGenerator.getVelocityTrajectory(getRobot()->getWorldTime());
+    desiredPosition = 0.35;
+    desiredVelocity = 0.0;
 }
 
 void SingleLeggedPDController::updateState() {

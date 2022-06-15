@@ -18,6 +18,33 @@ MainWindow::MainWindow(QWidget *parent) :
         data_y1[i] = 0;
         data_y2[i] = 0;
     }
+    ui->widget->legend->setVisible(true);
+    ui->widget->legend->setFont(QFont("Helvetica", 9));
+    ui->widget->addGraph();
+    ui->widget->graph(0)->setName("position");
+    ui->widget->graph(0)->setPen(QPen(QColor(0, 0, 255)));
+    ui->widget->addGraph();
+    ui->widget->graph(1)->setName("desired position");
+    ui->widget->graph(1)->setPen(QPen(QColor(255, 0, 0)));
+
+    ui->widget_2->legend->setVisible(true);
+    ui->widget_2->legend->setFont(QFont("Helvetica", 9));
+    ui->widget_2->addGraph();
+    ui->widget_2->graph(0)->setName("velocity");
+    ui->widget_2->graph(0)->setPen(QPen(QColor(0, 0, 255)));
+    ui->widget_2->addGraph();
+    ui->widget_2->graph(1)->setName("desired velocity");
+    ui->widget_2->graph(1)->setPen(QPen(QColor(255, 0, 0)));
+
+    ui->widget_3->legend->setVisible(true);
+    ui->widget_3->legend->setFont(QFont("Helvetica", 9));
+    ui->widget_3->addGraph();
+    ui->widget_3->graph(0)->setName("torque hip");
+    ui->widget_3->graph(0)->setPen(QPen(QColor(0, 0, 255)));
+    ui->widget_3->addGraph();
+    ui->widget_3->graph(1)->setName("torque knee");
+    ui->widget_3->graph(1)->setPen(QPen(QColor(255, 0, 0)));
+
 }
 
 MainWindow::~MainWindow() {
@@ -43,11 +70,7 @@ void MainWindow::plotWidget1() {
         if (y1_desired[i] < data_widget1_min) { data_widget1_min = y1_desired[i]; }
         if (y1_desired[i] > data_widget1_max) { data_widget1_max = y1_desired[i]; }
     }
-    ui->widget->addGraph();
-    ui->widget->graph(0)->setPen(QPen(QColor(0, 0, 255)));
     ui->widget->graph(0)->addData(x, y1);
-    ui->widget->addGraph();
-    ui->widget->graph(1)->setPen(QPen(QColor(255, 0, 0)));
     ui->widget->graph(1)->addData(x, y1_desired);
     // give the axes some labels:
     ui->widget->xAxis->setLabel("time [sec]");
@@ -71,11 +94,7 @@ void MainWindow::plotWidget2() {
         if (y2_desired[i] < data_widget2_min) { data_widget2_min = y2_desired[i]; }
         if (y2_desired[i] > data_widget2_max) { data_widget2_max = y2_desired[i]; }
     }
-    ui->widget_2->addGraph();
-    ui->widget_2->graph(0)->setPen(QPen(QColor(0, 0, 255)));
     ui->widget_2->graph(0)->addData(x, y2);
-    ui->widget_2->addGraph();
-    ui->widget_2->graph(1)->setPen(QPen(QColor(255, 0, 0)));
     ui->widget_2->graph(1)->addData(x, y2_desired);
     // give the axes some labels:
     ui->widget_2->xAxis->setLabel("time [sec]");
@@ -100,11 +119,7 @@ void MainWindow::plotWidget3() {
         if (y3_blue[i] > data_widget3_max) { data_widget3_max = y3_blue[i]; }
 
     }
-    ui->widget_3->addGraph();
-    ui->widget_3->graph(0)->setPen(QPen(QColor(0, 0, 255)));
     ui->widget_3->graph(0)->addData(x, y3_blue);
-    ui->widget_3->addGraph();
-    ui->widget_3->graph(1)->setPen(QPen(QColor(255, 0, 0)));
     ui->widget_3->graph(1)->addData(x, y3_red);
     // give the axes some labels:
     ui->widget_3->xAxis->setLabel("time [sec]");

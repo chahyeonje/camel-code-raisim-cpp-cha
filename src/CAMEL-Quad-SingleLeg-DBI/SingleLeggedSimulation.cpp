@@ -11,19 +11,18 @@
 extern MainWindow *MainUI;
 pthread_t thread_simulation;
 
-std::string urdfPath = "\\home\\jaehoon\\raisimLib\\camel-code-raisim-cpp\\rsc\\camel_single_leg\\camel_single_leg.urdf";
+std::string urdfPath = "\\home\\camel\\raisimLib\\camel-code-raisim-cpp\\rsc\\camel_single_leg\\camel_single_leg_no_meshes.urdf";
 std::string name = "single_leg";
 raisim::World world;
-
-double simulationDuration = 1.0;
+Eigen::MatrixXd validationData(7,101);
+int validationData_idx = 0;
+double simulationDuration = 0.5;
 double dT = 0.005;
 SingleLeggedSimulation sim = SingleLeggedSimulation(&world, dT);
 SingleLeggedRobot robot = SingleLeggedRobot(&world, urdfPath, name);
 
-SingleLeggedPDController controller = SingleLeggedPDController(&robot);
-//SingleLeggedIDController controller = SingleLeggedIDController(&robot, dT);
-//SingleLeggedMPCController controller = SingleLeggedMPCController(&robot, dT);
-
+//SingleLeggedPDController controller = SingleLeggedPDController(&robot);
+SingleLeggedIDController controller = SingleLeggedIDController(&robot, dT);
 double oneCycleSimTime = 0;
 int divider = ceil(simulationDuration / dT / 200);
 int iteration = 0;
@@ -33,6 +32,18 @@ void raisimSimulation() {
         oneCycleSimTime = iteration * dT;
         controller.doControl();
         world.integrate();
+        validationData(0, validationData_idx) = robot.getQ()[1];
+        validationData(1, validationData_idx) = robot.getQ()[2];
+        validationData(2, validationData_idx) = robot.getQD()[1];
+        validationData(3, validationData_idx) = robot.getQD()[2];
+        validationData(4, validationData_idx) = controller.torque[1];
+        validationData(5, validationData_idx) = controller.torque[2];
+        validationData(6, validationData_idx) = robot.getGRFz();
+        if(robot.getGRFz() == 0)
+        {
+            std::cout<<"zero GRF is sensored."<<std::endl;
+        }
+
         if (iteration % divider == 0) {
             MainUI->data_x[MainUI->data_idx] = world.getWorldTime();
             MainUI->data_y1[MainUI->data_idx] = robot.getQ()[0];
@@ -43,8 +54,11 @@ void raisimSimulation() {
             MainUI->data_y3_red[MainUI->data_idx] = controller.torque[2];
             MainUI->data_idx += 1;
         }
+        validationData_idx++;
         iteration++;
     } else if (oneCycleSimTime >= simulationDuration) {
+        std::cout<<validationData_idx<<std::endl;
+        sim.writeToCSVfile("GRFValidation_IDControlled_Quintic_3.csv", validationData);
         MainUI->button1 = false;
         iteration = 0;
         oneCycleSimTime = 0;

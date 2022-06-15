@@ -9,6 +9,7 @@
 #include "SingleLeggedRobot.h"
 #include "SingleLeggedPDController.h"
 #include "SingleLeggedIDController.h"
+#include "SingleLeggedMPCController.h"
 
 class SingleLeggedSimulation : public Simulation {
 

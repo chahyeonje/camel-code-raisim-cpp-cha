@@ -37,7 +37,7 @@ public:
 
     SingleLeggedIDController(Robot *robot, double dT) : Controller(robot) {
         updateState();
-        mTrajectoryGenerator.updateTrajectory(position[0], 0.35, getRobot()->getWorldTime(), 1.0);
+        mTrajectoryGenerator.updateTrajectory(position[0], 0.35, getRobot()->getWorldTime(), 0.5);
         setPDGain(50.0, 2.5);
         torque[0] = 0.0;
         mDT = dT;
