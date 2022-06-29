@@ -33,7 +33,7 @@ public:
 
     SingleLeggedMPCController(Robot *robot, double dT) : Controller(robot) {
             updateState();
-            mTrajectoryGenerator.updateTrajectory(position[0], 0.23, getRobot()->getWorldTime(), 1.0);
+            mTrajectoryGenerator.updateTrajectory(position[0], 0.40, getRobot()->getWorldTime(), 1.0);
             torque[0] = 0.0;
             mDT = dT;
             mMaximumIteration = 100;
