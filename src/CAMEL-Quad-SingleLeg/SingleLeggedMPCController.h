@@ -33,7 +33,7 @@ public:
 
     SingleLeggedMPCController(Robot *robot, double dT) : Controller(robot) {
             updateState();
-            mTrajectoryGenerator.updateTrajectory(position[0], 0.35, getRobot()->getWorldTime(), 1.0);
+            mTrajectoryGenerator.updateTrajectory(position[0], 0.23, getRobot()->getWorldTime(), 1.0);
             torque[0] = 0.0;
             mDT = dT;
             mMaximumIteration = 100;
@@ -68,7 +68,7 @@ private:
     double mGravity = -9.81;
     double mDT;
 
-    int mMPCHorizon = 7;
+    int mMPCHorizon = 5;
     int mIteration;
     int mMaximumIteration;
     double mTerminateCondition;

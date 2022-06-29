@@ -37,7 +37,7 @@ int motorKnee = 0x141;
 int motorHip = 0x143;
 double intr = 1.0;
 
-LoadCell sensorLoadcell;
+//LoadCell sensorLoadcell;
 double sensoredForce = 0.0;
 
 std::string urdfPath = "\\home\\jaehoon\\raisimLib\\camel-code-raisim-cpp\\rsc\\camel_single_leg\\camel_single_leg.urdf";
@@ -45,8 +45,8 @@ std::string name = "singleLeg";
 raisim::World world;
 SingleLeggedOperation realRobot = SingleLeggedOperation(&world, 250);
 SingleLeggedRobotOperation singleLeg = SingleLeggedRobotOperation(&world, urdfPath, name, &can, dT);
-//SingleLeggedPDControllerOperation controller = SingleLeggedPDControllerOperation(&singleLeg, &currentTime, dT);
-SingleLeggedIDControllerOperation controller = SingleLeggedIDControllerOperation(&singleLeg, &currentTime, dT);
+SingleLeggedPDControllerOperation controller = SingleLeggedPDControllerOperation(&singleLeg, &currentTime, dT);
+//SingleLeggedIDControllerOperation controller = SingleLeggedIDControllerOperation(&singleLeg, &currentTime, dT);
 raisim::RaisimServer server(&world);
 
 std::random_device rd;
@@ -58,7 +58,6 @@ Eigen::MatrixXd collectedData(7,1000);
 
 void operationCode(){
     singleLeg.visualize();
-    collectedData(0) =
     if(isrealTimePlot)
     {
         can.readEncoder(motorHip);
@@ -106,10 +105,10 @@ void operationCode(){
         controller.doControl();
         std::cout<<"current time: "<<currentTime<<std::endl;
 ////        For PD controller
-//        std::cout<<"current position : "<<controller.position[1]<<" "<<controller.position[2]<<std::endl;
-//        std::cout<<"desired position : "<<controller.desiredJointPosition[0] <<" "<<controller.desiredJointPosition[1]<<std::endl;
-//        std::cout<<"current velocity : "<<controller.velocity[1]<<" "<<controller.velocity[2]<<std::endl;
-//        std::cout<<"desired velocity : "<<controller.desiredJointVelocity[0] <<" "<<controller.desiredJointVelocity[1]<<std::endl;
+        std::cout<<"current position : "<<controller.position[1]<<" "<<controller.position[2]<<std::endl;
+        std::cout<<"desired position : "<<controller.desiredJointPosition[0] <<" "<<controller.desiredJointPosition[1]<<std::endl;
+        std::cout<<"current velocity : "<<controller.velocity[1]<<" "<<controller.velocity[2]<<std::endl;
+        std::cout<<"desired velocity : "<<controller.desiredJointVelocity[0] <<" "<<controller.desiredJointVelocity[1]<<std::endl;
 
 ////        For ID controller
 //        std::cout<<"current position : "<<controller.position[0]<<std::endl;
@@ -178,8 +177,8 @@ void *rt_operation_thread(void *arg) {
 void *rt_loadcell_thread(void *arg){
     while(true)
     {
-        sensorLoadcell.readData();
-        sensoredForce = sensorLoadcell.getSensoredForce();
+//        sensorLoadcell.readData();
+//        sensoredForce = sensorLoadcell.getSensoredForce();
 //        std::cout<<"Sensored force[N] : "<<sensoredForce<<std::endl;
     }
 }
@@ -199,7 +198,7 @@ int main(int argc, char *argv[]) {
     buttonZeroingPressed = &w.buttonZeroing;
 
     int thread_id_operation = generate_rt_thread(thread_operation, rt_operation_thread, "operation_thread", 0, 99, NULL);
-    int thread_id_sensorLoadcell = generate_rt_thread(thread_loadcell, rt_loadcell_thread, "sensor_loadcell_thread", 1, 98, NULL);
+//    int thread_id_sensorLoadcell = generate_rt_thread(thread_loadcell, rt_loadcell_thread, "sensor_loadcell_thread", 1, 98, NULL);
     w.show();
 
     return a.exec();

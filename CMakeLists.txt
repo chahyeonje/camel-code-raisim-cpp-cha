@@ -96,12 +96,15 @@ target_link_libraries(camel-canine_single_leg_operation ${CAMEL_LIBS})
 # ====== Canine Single Leg ====== /#
 ## Operation /##
 
+## TEST FILES ##
 add_executable(camel-test_trajectory_generation src/Test/Test_trajectoryGenerator.cpp include/TrajectoryGenerator/CubicTrajectoryGenerator.cpp include/TrajectoryGenerator/QuinticTrajectoryGenerator.cpp)
 add_executable(camel-rmdx8test_torque src/Test/Test_RMDX8Pro.cpp)
 add_executable(camel-test_real_time_thread src/Test/Test_RealTimeThread.cpp ${CAMEL_SOURCES})
 target_link_libraries(camel-test_real_time_thread ${CAMEL_LIBS})
 add_executable(camel-test_gradient_descent_optimizer src/Test/Test_GradientDescentOptimizer.cpp ${CAMEL_SOURCES})
 target_link_libraries(camel-test_gradient_descent_optimizer ${CAMEL_LIBS})
-
 add_executable(camel-test_sensor_loadcell src/Test/Test_SensorLoadCell.cpp ${CAMEL_SOURCES})
 target_link_libraries(camel-test_sensor_loadcell ${CAMEL_LIBS})
+add_executable(camel-test_urdf src/Test/Test_urdf.cpp)
+target_link_libraries(camel-test_urdf ${CAMEL_LIBS})
+## TEST FILES /##

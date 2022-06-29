@@ -7,6 +7,7 @@
 
 #include "include/CAMEL/Robot.h"
 #include "SingleLegCAN.h"
+//TODO: update mLumpedMass
 
 class SingleLeggedRobotOperation : public Robot {
 public:
@@ -31,8 +32,8 @@ private:
     Eigen::VectorXd mJointPosition_past = Eigen::VectorXd(3);
     Eigen::VectorXd mJointVelocity = Eigen::VectorXd(3);
 
-    double mHipOffset = 50.0 * 3.141592 / 180.0; //
-    double mKneeOffset = -3.302511324; //
+    double mHipOffset = 1.38045057;
+    double mKneeOffset = -2.649026222;
     double mLumpedMass = 2.660;
     double mDT;
     int mMotorKneeID = 0x141;

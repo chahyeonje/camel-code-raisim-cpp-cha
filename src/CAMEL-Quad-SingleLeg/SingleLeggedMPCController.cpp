@@ -11,6 +11,7 @@ void SingleLeggedMPCController::doControl() {
     solve();
     computeControlInput();
     setControlInput();
+    std::cout<<"calculated forces : \n"<<mForce<<std::endl;
     resetMPCVariables();
 }
 
