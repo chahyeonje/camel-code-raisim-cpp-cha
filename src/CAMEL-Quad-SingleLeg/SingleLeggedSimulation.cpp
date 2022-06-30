@@ -81,6 +81,7 @@ void *rt_simulation_thread(void *arg) {
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
     MainWindow w;
+    sim.setGroundProperty("wheat");
     raisim::RaisimServer server(&world);
     server.launchServer(8080);
     int thread_id_timeChecker = generate_rt_thread(thread_simulation, rt_simulation_thread, "simulation_thread", 0, 99,
