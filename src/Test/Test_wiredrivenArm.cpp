@@ -14,36 +14,42 @@ int main(int argc, char* argv[]) {
     /// create objects
     world.addGround();
     auto robot = world.addArticulatedSystem("\\home\\cha\\raisimLib\\camel-code-raisim-cpp\\rsc\\camel_wire_arm\\camel_wire_arm.urdf");
-//    auto robot1 = world.addArticulatedSystem("\\home\\cha\\raisimLib\\camel-code-raisim-cpp\\rsc\\camel_wire_arm\\camel_wire_arm1.urdf");
-//    auto robot2 = world.addArticulatedSystem("\\home\\cha\\raisimLib\\camel-code-raisim-cpp\\rsc\\camel_wire_arm\\camel_wire_arm2.urdf");
 
     /// kinova joint PD controller
     Eigen::VectorXd jointNominalConfig(robot->getGeneralizedCoordinateDim()), jointVelocityTarget(robot->getDOF());
     double pi = 3.141592;
+    Eigen::VectorXd torque = Eigen::VectorXd(1);
+    double position;
+    double velocity;
+    double positionError;
+    double velocityError;
+    double desiredPosition = 0;
+    double desiredVelocity = 0;
+    double PGain=1;
+    double DGain=0.1;
 
     jointVelocityTarget.setZero();
-    jointNominalConfig << 0.0;
+    jointNominalConfig << pi/3*2;
     robot->setGeneralizedCoordinate(jointNominalConfig);
     robot->setGeneralizedForce(Eigen::VectorXd::Zero(robot->getDOF()));
     robot->setName("robot");
 
-//    jointNominalConfig << pi/2.0;
-//    robot1->setGeneralizedCoordinate(jointNominalConfig);
-//    robot1->setGeneralizedForce(Eigen::VectorXd::Zero(robot->getDOF()));
-//    robot1->setName("robot1");
-//
-//    jointNominalConfig << pi/1.5;
-//    robot2->setGeneralizedCoordinate(jointNominalConfig);
-//    robot2->setGeneralizedForce(Eigen::VectorXd::Zero(robot->getDOF()));
-//    robot2->setName("robot2");
     /// launch raisim server
     raisim::RaisimServer server(&world);
     server.launchServer();
     server.focusOn(robot);
+    sleep(3);
     for (int i=0; i<2000000; i++) {
         std::this_thread::sleep_for(std::chrono::microseconds(1000));
-//        jointNominalConfig << 0 ;
+//        jointNominalConfig << i*180/pi*0.00001 ;
 //        robot->setGeneralizedCoordinate(jointNominalConfig);
+        position = robot->getGeneralizedCoordinate()[0];
+        velocity = robot->getGeneralizedVelocity()[0];
+        positionError = desiredPosition - position;
+        velocityError = desiredVelocity - velocity;
+        torque[0] = PGain * positionError + DGain * velocityError;
+        robot->setGeneralizedForce(torque);
+        robot->setExternalForce(robot->getBodyIdx("link2"),{0.125,0,0.045},{-5,5,0});
         server.integrateWorldThreadSafe();
     }
 

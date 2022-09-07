@@ -107,4 +107,8 @@ add_executable(camel-test_sensor_loadcell src/Test/Test_SensorLoadCell.cpp ${CAM
 target_link_libraries(camel-test_sensor_loadcell ${CAMEL_LIBS})
 add_executable(camel-test_urdf src/Test/Test_urdf.cpp)
 target_link_libraries(camel-test_urdf ${CAMEL_LIBS})
+add_executable(camel-test_wiredrivenArm src/Test/Test_wiredrivenArm.cpp)
+target_link_libraries(camel-test_wiredrivenArm ${CAMEL_LIBS})
+add_executable(camel-test_test src/Test/Test_test.cpp)
+target_link_libraries(camel-test_test ${CAMEL_LIBS})
 ## TEST FILES /##

@@ -23,5 +23,4 @@ private:
 
 };
 
-
 #endif //RAISIM_SIMPLEPENDULUMSIMULATION_H

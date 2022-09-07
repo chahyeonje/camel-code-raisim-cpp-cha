@@ -20,9 +20,9 @@ double dT = 0.005;
 SingleLeggedSimulation sim = SingleLeggedSimulation(&world, dT);
 SingleLeggedRobot robot = SingleLeggedRobot(&world, urdfPath, name);
 
-//SingleLeggedPDController controller = SingleLeggedPDController(&robot);
+SingleLeggedPDController controller = SingleLeggedPDController(&robot);
 //SingleLeggedIDController controller = SingleLeggedIDController(&robot, dT);
-SingleLeggedMPCController controller = SingleLeggedMPCController(&robot, dT);
+//SingleLeggedMPCController controller = SingleLeggedMPCController(&robot, dT);
 
 double oneCycleSimTime = 0;
 int divider = ceil(simulationDuration / dT / 200);
